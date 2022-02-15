@@ -1,0 +1,6 @@
+- Aplicación del drive 
+- dos sockets uno para metainformación y otro para datos 
+- subir y descargar archivos y carpetas (la carpeta puede tener subcarpetas)
+- borrar archivos
+ 
+- Carpeta
