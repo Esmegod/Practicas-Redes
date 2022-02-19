@@ -1,0 +1,17 @@
+	Aplicación como drive 
+
+
+- Subir un archivo, varios archivos y o una carpeta completa 
+- El servidor crea una carpeta por cliente
+- clientes se identifiquen con un user, si está, entonces mostrar los archivos, si no entonces crear nueva carpeta
+
+Usuario nuevo 
+- si eres nuevo aparece un mensaje de que no tienes archivos. 
+- opcion para subir archivos o carpetas 
+
+usuario existente
+- 
+
+
+
+Enlistar 
