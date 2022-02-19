@@ -3,12 +3,14 @@ import java.io.*;
 import javax.swing.JFileChooser;
 /**
  *
- * @author esme
+ * @author esme y fer
  * Práctica 1 
  * 
  */
+
 public class CEnvia {
     public static void main(String[] args){
+  
         try{
             int pto = 8000;
             String dir = "127.0.0.1";

@@ -18,14 +18,14 @@ import java.net.Socket;
 public class servidor {
     public static void main(String[] args){
         try{
-            ServerSocket servidor = new ServerSocket(1234);
+            ServerSocket servidor = new ServerSocket(8091);
             servidor.setReuseAddress(true); //no se para que es esto 
             System.out.println("Servidor iniciado ... esperando clientes");
             while(true){
                 Socket cliente = servidor.accept();
                 System.out.println("Cliente conectado desde " + cliente.getInetAddress() + ":" + cliente.getPort());
                 PrintWriter pw = new PrintWriter(new OutputStreamWriter(cliente.getOutputStream()));
-                pw.println("Hola mundo");
+                pw.println("no fer");
                 pw.flush();
                 pw.close();
                 cliente.close();

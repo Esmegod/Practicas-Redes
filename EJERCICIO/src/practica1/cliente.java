@@ -16,11 +16,11 @@ import java.net.Socket;
 public class cliente {
     public static void main(String[] args){
         try{
-            String dir = "192.168.100.4"; //Dirección IPv4 
-            String dir2 = "2806:2f0:9960:e3d8:9997:e5d3:fd71:4381"; //Dirección IPv6
+            String dir = "189.242.207.192"; //Dirección IPv4 
+            String dir2 = "2806:106e:d:f59e:7545:3f26:ae5d:96d"; //Dirección IPv6
         
             int puerto = 1234; // ¿Por qué se utilizó ese puerto?
-            Socket cliente = new Socket(dir, puerto);
+            Socket cliente = new Socket(dir2, puerto);
             BufferedReader br = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
             String mensaje = br.readLine();
             System.out.println("Mensaje recibido: " + mensaje);

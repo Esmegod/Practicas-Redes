@@ -27,12 +27,12 @@ public class SRecibe {
               
               String nombre = dis.readUTF();
               long tam = dis.readLong();
-              
               System.out.println("Comienza descarga del archivo "+nombre+" de "+tam+" bytes\n\n");
               DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+nombre));
               long recibidos=0;
               int l=0, porcentaje=0;
               while(recibidos<tam){
+
                   byte[] b = new byte[1500];
                   l = dis.read(b);
                   System.out.println("leidos: "+l);
