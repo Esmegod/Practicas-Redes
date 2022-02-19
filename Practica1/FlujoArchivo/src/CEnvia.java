@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.Scanner;
 import javax.swing.JFileChooser;
 /**
  *
@@ -10,19 +11,44 @@ import javax.swing.JFileChooser;
 
 public class CEnvia {
     public static void main(String[] args){
-  
+        //Conexión con el servidor 
         try{
             int pto = 8000;
             String dir = "127.0.0.1";
             Socket cl = new Socket(dir,pto);
-            System.out.println("Conexion con servidor establecida.. lanzando FileChooser..");
+            System.out.println("Conexion con servidor establecida");
+            DataOutputStream dos = new DataOutputStream(cl.getOutputStream()); //Flujo de datos con el servidor
+
+            //Se ingresa el usuaurio
+            System.out.println("Bienvenido, ingrese su nombre de usuario");
+            Scanner leer = new Scanner(System.in);
+            String usuario = leer.nextLine();
+            dos.writeUTF(usuario); //Se envia el usuario
+            dos.flush();
+
+            
+
+            /*
+            
+            1.- Archivo1.pdf
+            2.- Carpeta1
+            3.- Archivo2.csv
+            4.- Carpeta2
+            
+            5.- Agregar nuevo archivo  
+            
+            seleccionar -> 5
+            
+            */
+            
             JFileChooser jf = new JFileChooser();
+            
             jf.setMultiSelectionEnabled(true);
             int r = jf.showOpenDialog(null);
             if(r==JFileChooser.APPROVE_OPTION){
                 File f[] = jf.getSelectedFiles(); //Arreglo de files
                 
-                DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
+                
                 for(int i=0; i<f.length; i++){
                     String nombre = f[i].getName();
                     String path = f[i].getAbsolutePath();

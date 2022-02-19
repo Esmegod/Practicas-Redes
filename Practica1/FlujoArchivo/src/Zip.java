@@ -1,9 +1,6 @@
 //Zip: https://www.youtube.com/watch?v=_G_HXByQu3w
 //unZip: 
 
-
-package com.ipn.mx;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,8 +11,8 @@ import javax.swing.JFileChooser;
 
 public class Zip {
     public static void main(String args[]){
-        //zipFiles();
-        unzipFiles();
+        zipFiles();
+        //unzipFiles();
     }
     
     public static void zipFiles(){
