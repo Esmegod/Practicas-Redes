@@ -39,11 +39,11 @@ public class SRecibe {
                 }
                 auxUsuario.setWritable(true);
                 
-               int opc = 0;
-               while(opc != 2){
+                carpeta = dis.readUTF();
+                ruta_archivos += carpeta + "\\"; //Se lleva el control del path
+                int opc = 0;
+                while(opc != 2){
                     //Envio del arreglo de nombres de archivos y carpetas
-                    carpeta = dis.readUTF();
-                    ruta_archivos += carpeta + "\\"; //Se lleva el control del path
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
                     dos.writeInt(archivos.length);
@@ -66,6 +66,7 @@ public class SRecibe {
 
                         }
                         opc = 1;
+                        ruta_archivos = "Usuarios\\"+usuario;
                     }
                     else if( opc != 2){
                          //Se valida si es archivo o carpeta
@@ -73,12 +74,16 @@ public class SRecibe {
                             opc = dis.readInt();
                             if(opc == 1){
                                 //Se descarga
-
+                                ruta_archivos = "Usuarios\\"+usuario;
                             }else{ 
                                 //Se elimina
-
+                                ruta_archivos = "Usuarios\\"+usuario;
                             }
                             opc = 1;
+                        }
+                        else{
+                            carpeta = dis.readUTF();
+                            ruta_archivos += carpeta + "\\";
                         }
                     }
                 }

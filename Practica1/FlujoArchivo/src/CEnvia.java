@@ -27,18 +27,19 @@ public class CEnvia {
             dos.writeUTF(usuario); //Se envia el usuario
             dos.flush();
           
-
             //Menu
             int opc = 0;
             String carpeta = usuario;
             
+            dos.writeUTF(carpeta); //Se envia el nombre de la carpeta a enlistas
+            dos.flush();
+
             while(opc != 2){
                 System.out.println("Bienvenido " + usuario);
                 System.out.println("1. Subir aqui");
                 System.out.println("2. Salir");
                 //Despliega los archivos en la carpeta
-                dos.writeUTF(carpeta); //Se envia el nombre de la carpeta a enlistas
-                dos.flush();
+                
                 int NoArchivos = dis.readInt();
                 String [] archivosListados = new String[NoArchivos];
 
@@ -96,6 +97,8 @@ public class CEnvia {
                         opc = 1;
                     }else{//Es carpeta
                         carpeta = archivosListados[opc-3];
+                        dos.writeUTF(carpeta); 
+                        dos.flush();
                     } 
                 }        
             }
