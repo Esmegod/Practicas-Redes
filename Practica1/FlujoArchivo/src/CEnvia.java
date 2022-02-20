@@ -4,7 +4,7 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 /**
  *
- * @author esme y fer
+ * @author esme y fer c:
  * Práctica 1 
  * 
  */
@@ -47,22 +47,24 @@ public class CEnvia {
                     System.out.println((i+3) + ". " + archivosListados[i]);
                 }
                 
-                System.out.print("\t\t Seleccionar ->");
+                System.out.print("\t\t Seleccionar -> ");
                 opc = leer.nextInt();
+                dos.writeInt(opc);
                 
                 //Opcion 1 (Subir archivo o carpeta)
                 if(opc == 1){
-                    System.out.print("\033[H\033[2J");  
-                    System.out.flush();  
+                    System.out.print("---------------------------------------------------");  
                     System.out.print("Seleccione la opcion");
                     System.out.println("1. Un solo Archivo");
                     System.out.println("2. Una Carpeta");
                     System.out.println("3. Varios Archivos");
                     System.out.print("\t\t Seleccionar ->");
                     opc = leer.nextInt();
+                    dos.writeInt(opc);
+                    
                     if(opc == 1){
                         //Se sube un solo archivo
-                        
+                        enviarUnArchivo(dos);
                     }else if(opc == 2){
                         //Se sube una carpeta
 
@@ -76,13 +78,14 @@ public class CEnvia {
                 else if(opc != 2){
                     //Se valida si es archivo o carpeta
                     if(archivosListados[opc-3].contains(".")){ //Es archivo
-                        System.out.print("\033[H\033[2J");  
+                        System.out.print("---------------------------------------------------");  
                         System.out.flush();  
                         System.out.print("Ha seleccionado el archivo: " + archivosListados[opc-3]);
                         System.out.println("1. Descargar");
                         System.out.println("2. Eliminar");
                         System.out.print("\t\t Seleccionar ->");
                         opc = leer.nextInt();
+                        dos.writeInt(opc);
                         if(opc == 1){
                             //Se descarga
 
@@ -96,47 +99,52 @@ public class CEnvia {
                     } 
                 }        
             }
-            
+            dos.close();
+            dis.close();
+            cl.close();
            
-            // JFileChooser jf = new JFileChooser();
-            
-            // jf.setMultiSelectionEnabled(true);
-            // int r = jf.showOpenDialog(null);
-            // if(r==JFileChooser.APPROVE_OPTION){
-            //     File f[] = jf.getSelectedFiles(); //Arreglo de files
-                
-                
-            //     for(int i=0; i<f.length; i++){
-            //         String nombre = f[i].getName();
-            //         String path = f[i].getAbsolutePath();
-            //         long tam = f[i].length();
-            //         System.out.println("Preparandose pare enviar archivo "+path+" de "+tam+" bytes\n\n");
-            //         DataInputStream dis2 = new DataInputStream(new FileInputStream(path));
-            //         dos.writeUTF(nombre);
-            //         dos.flush();
-            //         dos.writeLong(tam);
-            //         dos.flush();
-            //         long enviados = 0;
-            //         int l=0,porcentaje=0;
-            //         while(enviados<tam){
-            //             byte[] b = new byte[1500];
-            //             l=dis2.read(b);
-            //             System.out.println("enviados: "+l);
-            //             dos.write(b,0,l);
-            //             dos.flush();
-            //             enviados = enviados + l;
-            //             porcentaje = (int)((enviados*100)/tam);
-            //             System.out.print("\rEnviado el "+porcentaje+" % del archivo");
-            //         }//while
-            //         System.out.println("\nArchivo enviado..");
-            //         dis2.close();
-            //     }
-                dos.close();
-                dis.close();
-                cl.close();
-           // }
         }catch(Exception e){
             e.printStackTrace();
         }//catch
     }//main
+
+
+    public static void enviarUnArchivo(DataOutputStream dos){
+        try{
+            JFileChooser jf = new JFileChooser();
+            jf.setMultiSelectionEnabled(false);
+            int r = jf.showOpenDialog(null);
+            if(r==JFileChooser.APPROVE_OPTION){
+                File f = jf.getSelectedFile(); //File
+                String nombre = f.getName();
+                String path = f.getAbsolutePath();
+                long tam = f.length();
+                System.out.println("Preparandose pare enviar el archivo "+path+" de "+tam+" bytes\n");
+                DataInputStream dis2 = new DataInputStream(new FileInputStream(path));
+                dos.writeUTF(nombre);
+                dos.flush();
+                dos.writeLong(tam);
+                dos.flush();
+                long enviados = 0;
+                int l=0,porcentaje=0;
+                while(enviados<tam){
+                    byte[] b = new byte[1500];
+                    l=dis2.read(b);
+                    System.out.println("enviados: "+l);
+                    dos.write(b,0,l);
+                    dos.flush();
+                    enviados = enviados + l;
+                    porcentaje = (int)((enviados*100)/tam);
+                    System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+                }//while
+                System.out.println("\nArchivo enviado..");
+                dis2.close();
+            }
+        
+        }catch(Exception e){
+            System.out.println("Error al enviar un archivo");
+            e.printStackTrace();
+        }
+    }
+
 }
