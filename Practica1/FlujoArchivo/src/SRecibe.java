@@ -57,14 +57,13 @@ public class SRecibe {
                     if(opc == 1){ //(Subir archivo o carpeta)
                         opc = dis.readInt();
                         if(opc == 1){ //Recibe un archivo
-                            System.out.println("Subiendo a: "+ruta_archivos);
                             recibirUnArchivo(dis, ruta_archivos);
                         }
-                        else if(opc == 2){
-
+                        else if(opc == 2){ // Recibe una carpeta
+                            
                         }
-                        else{
-
+                        else{//Recibe varios archivos
+                            recibirVariosArchivos(dis, ruta_archivos);
                         }
                         opc = 1;
                         ruta_archivos = "Usuarios\\"+usuario+"\\";
@@ -122,5 +121,35 @@ public class SRecibe {
             System.out.println("Error al recibir un archivo");
             e.printStackTrace();
         }
+    }
+
+    //Ola, me caes muy bien xD
+    public static void recibirVariosArchivos(DataInputStream dis, String ruta_archivos){
+        try{
+            long tam = dis.readLong();
+            System.out.println("Comienza descarga de varios archivos de tamaño total de "+tam+" bytes\n\n");
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+"Files.zip"));
+            long recibidos=0;
+            int l=0, porcentaje=0;
+            while(recibidos<tam){
+                byte[] b = new byte[1500];
+                l = dis.read(b);
+                System.out.println("leidos: "+l);
+                dos.write(b,0,l);
+                dos.flush();
+                recibidos = recibidos + l;
+                porcentaje = (int)((recibidos*100)/tam);
+                System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+            }//while
+            System.out.println("Archivo recibido..");
+            dos.close();
+        }catch(Exception e){
+            System.out.println("Error al recibir un archivo");
+            e.printStackTrace();
+        }
+        Zip zip = new Zip();
+        zip.unzipFiles(ruta_archivos);
+        //Eliminar con metodo eliminar ruta\Files.zip
+        
     }
 }

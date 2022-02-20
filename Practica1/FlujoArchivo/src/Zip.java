@@ -11,11 +11,11 @@ import javax.swing.JFileChooser;
 
 public class Zip {
     public static void main(String args[]){
-        zipFiles();
+        //zipFiles();
         //unzipFiles();
     }
     
-    public static void zipFiles(){
+    public void zipFiles(){
         try{
             JFileChooser jf = new JFileChooser();
             jf.setMultiSelectionEnabled(true);
@@ -46,16 +46,16 @@ public class Zip {
         }
     }
     
-    public static void unzipFiles(){
+    public void unzipFiles(String ruta){
         try{
             byte [] buffer = new byte[2048]; //bufer para ir escribiendo
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(new File("Files.zip"))); //Flujo de entrada del zip
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(ruta+"\\"+"Files.zip"))); //Flujo de entrada del zip
             ZipEntry zipEntry = zis.getNextEntry(); //Variable de control de cada entrada zip
             while(zipEntry != null){
                 if(zipEntry.isDirectory()){
                     continue;
                 }else{
-                    File file = new File(zipEntry.getName()); //Se crea la instancia del archivo en dicha entrada zip
+                    File file = new File(ruta +"\\"+zipEntry.getName()); //Se crea la instancia del archivo en dicha entrada zip
                     FileOutputStream fos = new FileOutputStream(file); //Flujo para la escritura del archivo
                     int len;
                     while((len = zis.read(buffer)) > 0){

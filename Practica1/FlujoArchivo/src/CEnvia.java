@@ -68,10 +68,11 @@ public class CEnvia {
                         enviarUnArchivo(dos);
                     }else if(opc == 2){
                         //Se sube una carpeta
-
+                        
                     }
                     else{
                         //Se suben varios archivos
+                        enviarVariosArchivos(dos);
                     }
                     opc = 1;
                 }
@@ -149,4 +150,35 @@ public class CEnvia {
         }
     }
 
+    public static void enviarVariosArchivos(DataOutputStream dos){
+        Zip zip = new Zip();
+        zip.zipFiles();
+        try{
+            File f = new File("Files.zip");
+            String path = f.getAbsolutePath();
+            long tam = f.length();
+            System.out.println("Preparandose pare enviar varios archivos con tamaño total de "+tam+" bytes\n");
+            DataInputStream dis2 = new DataInputStream(new FileInputStream(path));
+            dos.writeLong(tam);
+            dos.flush();
+            long enviados = 0;
+            int l=0,porcentaje=0;
+            while(enviados<tam){
+                byte[] b = new byte[1500];
+                l=dis2.read(b);
+                System.out.println("enviados: "+l);
+                dos.write(b,0,l);
+                dos.flush();
+                enviados = enviados + l;
+                porcentaje = (int)((enviados*100)/tam);
+                System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+            }//while
+            System.out.println("\nArchivo enviado..");
+            dis2.close();
+        }catch(Exception e){
+            System.out.println("Error al enviar varios archivos");
+            e.printStackTrace();
+        }
+        //Invocar al metodo eliminar Files.zip
+    }
 }
