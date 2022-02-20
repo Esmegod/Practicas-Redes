@@ -57,6 +57,7 @@ public class SRecibe {
                     if(opc == 1){ //(Subir archivo o carpeta)
                         opc = dis.readInt();
                         if(opc == 1){ //Recibe un archivo
+                            System.out.println("Subiendo a: "+ruta_archivos);
                             recibirUnArchivo(dis, ruta_archivos);
                         }
                         else if(opc == 2){
@@ -66,7 +67,7 @@ public class SRecibe {
 
                         }
                         opc = 1;
-                        ruta_archivos = "Usuarios\\"+usuario;
+                        ruta_archivos = "Usuarios\\"+usuario+"\\";
                     }
                     else if( opc != 2){
                          //Se valida si es archivo o carpeta
@@ -74,10 +75,10 @@ public class SRecibe {
                             opc = dis.readInt();
                             if(opc == 1){
                                 //Se descarga
-                                ruta_archivos = "Usuarios\\"+usuario;
+                                ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }else{ 
                                 //Se elimina
-                                ruta_archivos = "Usuarios\\"+usuario;
+                                ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }
                             opc = 1;
                         }
