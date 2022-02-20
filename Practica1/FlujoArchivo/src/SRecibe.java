@@ -46,9 +46,11 @@ public class SRecibe {
                     ruta_archivos += carpeta + "\\"; //Se lleva el control del path
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
-                    dos.writeInt(archivos.length); 
+                    dos.writeInt(archivos.length);
+                    dos.flush(); 
                     for(int i=0; i<archivos.length; i++){
                         dos.writeUTF(archivos[i].getName());
+                        dos.flush();
                     }
                     opc = dis.readInt();
                     
