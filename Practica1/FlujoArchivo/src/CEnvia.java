@@ -54,8 +54,8 @@ public class CEnvia {
                 
                 //Opcion 1 (Subir archivo o carpeta)
                 if(opc == 1){
-                    System.out.print("---------------------------------------------------");  
-                    System.out.print("Seleccione la opcion");
+                    System.out.println("---------------------------------------------------");  
+                    System.out.println("Seleccione la opcion");
                     System.out.println("1. Un solo Archivo");
                     System.out.println("2. Una Carpeta");
                     System.out.println("3. Varios Archivos");
@@ -79,8 +79,7 @@ public class CEnvia {
                 else if(opc != 2){
                     //Se valida si es archivo o carpeta
                     if(archivosListados[opc-3].contains(".")){ //Es archivo
-                        System.out.print("---------------------------------------------------");  
-                        System.out.flush();  
+                        System.out.println("---------------------------------------------------");   
                         System.out.print("Ha seleccionado el archivo: " + archivosListados[opc-3]);
                         System.out.println("1. Descargar");
                         System.out.println("2. Eliminar");
