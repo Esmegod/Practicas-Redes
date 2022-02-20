@@ -60,7 +60,7 @@ public class SRecibe {
                             recibirUnArchivo(dis, ruta_archivos);
                         }
                         else if(opc == 2){ // Recibe una carpeta
-                            
+                            recibirCarpeta(dis, ruta_archivos);
                         }
                         else{//Recibe varios archivos
                             recibirVariosArchivos(dis, ruta_archivos);
@@ -141,15 +141,45 @@ public class SRecibe {
                 porcentaje = (int)((recibidos*100)/tam);
                 System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
             }//while
-            System.out.println("Archivo recibido..");
+            System.out.println("Archivos recibidos..");
             dos.close();
         }catch(Exception e){
-            System.out.println("Error al recibir un archivo");
+            System.out.println("Error al recibir varios archivos");
             e.printStackTrace();
         }
         Zip zip = new Zip();
         zip.unzipFiles(ruta_archivos);
         //Eliminar con metodo eliminar ruta\Files.zip
-        
     }
+
+    public static void recibirCarpeta(DataInputStream dis, String ruta_archivos){
+        String nombreCarpeta = "";
+        try{
+            nombreCarpeta = dis.readUTF();
+            long tam = dis.readLong();
+            System.out.println("Comienza descarga de una carpeta de tamaño total de "+tam+" bytes\n\n");
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+"Directory.zip"));
+            long recibidos=0;
+            int l=0, porcentaje=0;
+            while(recibidos<tam){
+                byte[] b = new byte[1500];
+                l = dis.read(b);
+                System.out.println("leidos: "+l);
+                dos.write(b,0,l);
+                dos.flush();
+                recibidos = recibidos + l;
+                porcentaje = (int)((recibidos*100)/tam);
+                System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+            }//while
+            System.out.println("Carpeta recibida..");
+            dos.close();
+        }catch(Exception e){
+            System.out.println("Error al recibir una carpeta");
+            e.printStackTrace();
+        }
+        Zip zip = new Zip();
+        zip.unzipDirectory(ruta_archivos, nombreCarpeta);
+        //Eliminar con metodo eliminar ruta\Directory.zip
+    }
+
 }
