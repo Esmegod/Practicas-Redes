@@ -19,7 +19,6 @@ public class SRecibe {
             String carpeta = "Usuarios";
             String ruta_archivos = ruta+"\\"+carpeta+"\\";
             
-            
             File f2 = new File(ruta_archivos);
             if(!f2.exists()){
                 f2.mkdirs();  
@@ -31,6 +30,7 @@ public class SRecibe {
                 Socket cl = s.accept();
                 System.out.println("Cliente conectado desde "+cl.getInetAddress()+":"+cl.getPort());
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
+                DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
                 //Lee el usuario y valida su carpeta
                 String usuario = dis.readUTF();
                 File auxUsuario = new File("Usuarios\\"+usuario);
@@ -39,28 +39,49 @@ public class SRecibe {
                 }
                 auxUsuario.setWritable(true);
                 
-                String nombre = dis.readUTF();
-                long tam = dis.readLong();
-              System.out.println("Comienza descarga del archivo "+nombre+" de "+tam+" bytes\n\n");
-              DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+nombre));
-              long recibidos=0;
-              int l=0, porcentaje=0;
-              while(recibidos<tam){
+               int opc = 0;
+               while(opc != 2){
+                    //Envio del arreglo de nombres de archivos y carpetas
+                    carpeta = dis.readUTF();
+                    ruta_archivos += carpeta + "\\"; //Se lleva el control del path
+                    File a = new File(ruta_archivos);
+                    File [] archivos = a.listFiles();
+                    dos.writeInt(archivos.length); 
+                    for(int i=0; i<archivos.length; i++){
+                        dos.writeUTF(archivos[i].getName());
+                    }
+               }
+               
+                
 
-                  byte[] b = new byte[1500];
-                  l = dis.read(b);
-                  System.out.println("leidos: "+l);
-                  dos.write(b,0,l);
-                  dos.flush();
-                  recibidos = recibidos + l;
-                  porcentaje = (int)((recibidos*100)/tam);
-                  System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
-              }//while
-              System.out.println("Archivo recibido..");
+
+
+
+
+
+
+                
+        //         String nombre = dis.readUTF();
+        //         long tam = dis.readLong();
+        //             System.out.println("Comienza descarga del archivo "+nombre+" de "+tam+" bytes\n\n");
+        //             DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+nombre));
+        //             long recibidos=0;
+        //             int l=0, porcentaje=0;
+        //             while(recibidos<tam){
+        //           byte[] b = new byte[1500];
+        //           l = dis.read(b);
+        //           System.out.println("leidos: "+l);
+        //           dos.write(b,0,l);
+        //           dos.flush();
+        //           recibidos = recibidos + l;
+        //           porcentaje = (int)((recibidos*100)/tam);
+        //           System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+        //       }//while
+        //       System.out.println("Archivo recibido..");
               dos.close();
               dis.close();
               cl.close();
-          }//for
+         }//for
           
       }catch(Exception e){
           e.printStackTrace();
