@@ -13,6 +13,7 @@ public class CEnvia {
     public static void main(String[] args){
         //Conexión con el servidor 
         try{
+            
             int pto = 8000;
             String dir = "127.0.0.1";
             Socket cl = new Socket(dir,pto);
@@ -88,11 +89,11 @@ public class CEnvia {
                         opc = leer.nextInt();
                         dos.writeInt(opc);
                         if(opc == 1){
-                            //Se descarga
+                            //Se descarga un archivo 
 
                         }else{ 
-                            //Se elimina
-
+                            //Se elimina un archivo 
+                            dos.writeUTF(archivosListados[opc-3]);
                         }
                         opc = 1;
                     }else{//Es carpeta
@@ -105,7 +106,6 @@ public class CEnvia {
             dos.close();
             dis.close();
             cl.close();
-           
         }catch(Exception e){
             e.printStackTrace();
         }//catch

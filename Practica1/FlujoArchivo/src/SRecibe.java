@@ -77,6 +77,9 @@ public class SRecibe {
                                 ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }else{ 
                                 //Se elimina
+                                String archivoAEliminar = dis.readUTF();
+                                File fEliminar= new File(ruta_archivos+"\\" + archivoAEliminar);
+                                fEliminar.delete();
                                 ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }
                             opc = 1;
