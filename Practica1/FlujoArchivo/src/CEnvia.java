@@ -32,9 +32,6 @@ public class CEnvia {
             int opc = 0;
             int opc2 = 0; //Variable para los submenus
             String carpeta = usuario;
-            
-            dos.writeUTF(carpeta); //Se envia el nombre de la carpeta a enlistas
-            dos.flush();
 
             while(opc != 2){
                 System.out.println("Bienvenido " + usuario);

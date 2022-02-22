@@ -13,7 +13,7 @@ public class SRecibe {
             s.setReuseAddress(true); //Si se llega a cerrar, connectar inmediatamente
             System.out.println("Servidor iniciado esperando por archivos..");
             
-            //Crea la carpelta de los usuarios 
+            //Crea la carpeta de los usuarios 
             File f = new File(""); //Crea un archivo, no esta apuntando a nada, por lo que se guarda por default en la  raiz del proyecto 
             String ruta = f.getAbsolutePath();
             String carpeta = "Usuarios";
@@ -39,8 +39,8 @@ public class SRecibe {
                 }
                 auxUsuario.setWritable(true);
                 
-                carpeta = dis.readUTF();
-                ruta_archivos += carpeta + "\\"; //Se lleva el control del path
+                
+                ruta_archivos += usuario + "\\"; //Se lleva el control del path
                 int opc = 0;
                 while(opc != 2){
                     //Envio del arreglo de nombres de archivos y carpetas
@@ -93,6 +93,8 @@ public class SRecibe {
                 dos.close();
                 dis.close();
                 cl.close();
+                ruta_archivos = "Usuarios\\";
+                
          }//for
           
       }catch(Exception e){
