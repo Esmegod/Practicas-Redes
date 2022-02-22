@@ -30,6 +30,7 @@ public class CEnvia {
           
             //Menu
             int opc = 0;
+            int opc2 = 0; //Variable para los submenus
             String carpeta = usuario;
             
             dos.writeUTF(carpeta); //Se envia el nombre de la carpeta a enlistas
@@ -61,13 +62,13 @@ public class CEnvia {
                     System.out.println("2. Una Carpeta");
                     System.out.println("3. Varios Archivos");
                     System.out.print("\t\t Seleccionar -> ");
-                    opc = leer.nextInt();
-                    dos.writeInt(opc);
+                    opc2 = leer.nextInt();
+                    dos.writeInt(opc2);
                     
-                    if(opc == 1){
+                    if(opc2 == 1){
                         //Se sube un solo archivo
                         enviarUnArchivo(dos);
-                    }else if(opc == 2){
+                    }else if(opc2 == 2){
                         //Se sube una carpeta
                         enviarCarpeta(dos);
                     }
@@ -75,27 +76,27 @@ public class CEnvia {
                         //Se suben varios archivos
                         enviarVariosArchivos(dos);
                     }
-                    opc = 1;
+                    
                 }
                 //Opcion (Selecciona archivo o carpeta) 
                 else if(opc != 2){
                     //Se valida si es archivo o carpeta
                     if(archivosListados[opc-3].contains(".")){ //Es archivo
                         System.out.println("---------------------------------------------------");   
-                        System.out.print("Ha seleccionado el archivo: " + archivosListados[opc-3]);
+                        System.out.println("Ha seleccionado el archivo: " + archivosListados[opc-3] + "\n");
                         System.out.println("1. Descargar");
                         System.out.println("2. Eliminar");
                         System.out.print("\t\t Seleccionar -> ");
-                        opc = leer.nextInt();
-                        dos.writeInt(opc);
-                        if(opc == 1){
+                        opc2 = leer.nextInt();
+                        dos.writeInt(opc2);
+                        if(opc2 == 1){
                             //Se descarga un archivo 
 
                         }else{ 
                             //Se elimina un archivo 
                             dos.writeUTF(archivosListados[opc-3]);
                         }
-                        opc = 1;
+                        
                     }else{//Es carpeta
                         carpeta = archivosListados[opc-3];
                         dos.writeUTF(carpeta); 
