@@ -88,7 +88,7 @@ public class CEnvia {
                         dos.writeInt(opc2);
                         if(opc2 == 1){
                             //Se descarga un archivo 
-
+                            descargarArchivo(dis, dos, archivosListados[opc-3]);
                         }else{ 
                             //Se elimina un archivo 
                             dos.writeUTF(archivosListados[opc-3]);
@@ -212,4 +212,40 @@ public class CEnvia {
         }
         //Invocar metodo para eliminar Directory.zip
     }
+
+    public static void descargarArchivo(DataInputStream dis, DataOutputStream dos, String nombreArchivo){
+        JFileChooser jf = new JFileChooser();
+        jf.setMultiSelectionEnabled(false);
+        jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int r = jf.showOpenDialog(null);
+        if(r==JFileChooser.APPROVE_OPTION){
+            try{
+                dos.writeUTF(nombreArchivo); //Se envia el nombre del archivo
+                String ruta = jf.getSelectedFile().getName() + "\\" + nombreArchivo;
+                long tam = dis.readLong();
+                System.out.println("Comienza descarga del archivo "+nombreArchivo+" de "+tam+" bytes\n\n");
+                DataOutputStream dos2 = new DataOutputStream(new FileOutputStream(ruta));
+                long recibidos=0;
+                int l=0, porcentaje=0;
+                while(recibidos<tam){
+                    byte[] b = new byte[1500];
+                    l = dis.read(b);
+                    System.out.println("leidos: "+l);
+                    dos2.write(b,0,l);
+                    dos2.flush();
+                    recibidos = recibidos + l;
+                    porcentaje = (int)((recibidos*100)/tam);
+                    System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+                }//while
+                System.out.println("Archivo recibido..");
+                dos2.close();
+
+            }catch(Exception e){
+                System.out.println("Error al descargar");
+                e.printStackTrace();
+            }
+            
+        }
+    }
+
 }

@@ -74,6 +74,8 @@ public class SRecibe {
                             opc = dis.readInt();
                             if(opc == 1){
                                 //Se descarga
+                                /*------------------------------------------------------------------------------------------------*/ 
+                                enviarArchivoParaDescargar(dis, dos, ruta_archivos);
                                 ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }else{ 
                                 //Se elimina
@@ -95,7 +97,7 @@ public class SRecibe {
                 cl.close();
                 ruta_archivos = "Usuarios\\";
                 
-         }//for
+        }//for
           
       }catch(Exception e){
           e.printStackTrace();
@@ -186,5 +188,33 @@ public class SRecibe {
         zip.unzipDirectory(ruta_archivos, nombreCarpeta);
         //Eliminar con metodo eliminar ruta\Directory.zip
     }
+
+    public static void enviarArchivoParaDescargar(DataInputStream dis, DataOutputStream dos, String ruta_archivos){
+        try {
+            String ruta = ruta_archivos + "\\" + dis.readUTF();
+            File f = new File(ruta);
+            long tam = f.length();
+            DataInputStream dis2 = new DataInputStream(new FileInputStream(ruta));
+            dos.writeLong(tam);
+            dos.flush();
+            long enviados = 0;
+            int l=0,porcentaje=0;
+            while(enviados<tam){
+                byte[] b = new byte[1500];
+                l=dis2.read(b);
+                System.out.println("enviados: "+l);
+                dos.write(b,0,l);
+                dos.flush();
+                enviados = enviados + l;
+                porcentaje = (int)((enviados*100)/tam);
+                System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+            }//while
+            System.out.println("\nDescarga enviada..");
+            dis2.close();
+        } catch (Exception e){
+            System.err.println("Error al enviar descarga");
+            e.printStackTrace();
+        }
+    } 
 
 }
