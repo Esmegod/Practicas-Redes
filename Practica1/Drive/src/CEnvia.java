@@ -15,7 +15,7 @@ public class CEnvia {
         try{
             
             int pto = 8000;
-            String dir = "127.0.0.1";
+            String dir = "2806:106e:d:f510:7545:3f26:ae5d:96d";
             Socket cl = new Socket(dir,pto);
             System.out.println("Conexion con servidor establecida");
             DataOutputStream dos = new DataOutputStream(cl.getOutputStream()); //Flujo de datos con el servidor
@@ -221,7 +221,7 @@ public class CEnvia {
         if(r==JFileChooser.APPROVE_OPTION){
             try{
                 dos.writeUTF(nombreArchivo); //Se envia el nombre del archivo
-                String ruta = jf.getSelectedFile().getName() + "\\" + nombreArchivo;
+                String ruta = jf.getSelectedFile().getAbsolutePath() + "\\" + nombreArchivo;
                 long tam = dis.readLong();
                 System.out.println("Comienza descarga del archivo "+nombreArchivo+" de "+tam+" bytes\n\n");
                 DataOutputStream dos2 = new DataOutputStream(new FileOutputStream(ruta));

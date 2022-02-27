@@ -74,7 +74,6 @@ public class SRecibe {
                             opc = dis.readInt();
                             if(opc == 1){
                                 //Se descarga
-                                /*------------------------------------------------------------------------------------------------*/ 
                                 enviarArchivoParaDescargar(dis, dos, ruta_archivos);
                                 ruta_archivos = "Usuarios\\"+usuario+"\\";
                             }else{ 
