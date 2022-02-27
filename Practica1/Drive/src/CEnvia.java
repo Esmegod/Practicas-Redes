@@ -15,7 +15,7 @@ public class CEnvia {
         try{
             
             int pto = 8000;
-            String dir = "2806:106e:d:f510:7545:3f26:ae5d:96d";
+            String dir = "2806:2f0:9960:e3d8:9997:e5d3:fd71:4381";
             Socket cl = new Socket(dir,pto);
             System.out.println("Conexion con servidor establecida");
             DataOutputStream dos = new DataOutputStream(cl.getOutputStream()); //Flujo de datos con el servidor
