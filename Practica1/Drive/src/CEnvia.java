@@ -38,8 +38,9 @@ public class CEnvia {
                 System.out.println("1. Subir aqui");
                 System.out.println("2. Salir");
                 //Despliega los archivos en la carpeta
-                
+                System.out.println("Antes de readInt");
                 int NoArchivos = dis.readInt();
+                System.out.println("Despues de int");
                 String [] archivosListados = new String[NoArchivos];
 
                 for(int i=0; i < NoArchivos; i++){
