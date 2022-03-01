@@ -114,7 +114,6 @@ public class Zip {
     
     public void unzipDirectory(String ruta, String nombreCarpeta){
         try{
-            
             String path = "Directory.zip"; //Ruta origen
             ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(ruta+"\\"+path))); //Flujo de entrada del zip
             ZipEntry zipEntry = zis.getNextEntry(); //Se obtiene la primera entrada
@@ -132,6 +131,8 @@ public class Zip {
                 fos.close();
                 zipEntry = zis.getNextEntry(); //Se obtiene la siguiente entrada
             }
+            zis.closeEntry();
+            zis.close();
         }catch(Exception e){
             e.printStackTrace();
         }

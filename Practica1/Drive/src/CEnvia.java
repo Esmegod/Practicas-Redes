@@ -15,7 +15,7 @@ public class CEnvia {
         try{
             
             int pto = 8000;
-            String dir = "2806:2f0:9960:e3d8:9997:e5d3:fd71:4381";
+            String dir = "127.0.0.1";
             Socket cl = new Socket(dir,pto);
             System.out.println("Conexion con servidor establecida");
             DataOutputStream dos = new DataOutputStream(cl.getOutputStream()); //Flujo de datos con el servidor
@@ -34,13 +34,14 @@ public class CEnvia {
             String carpeta = usuario;
 
             while(opc != 2){
-                System.out.println("Bienvenido " + usuario);
+                System.out.println("---------------------------------------------------");  
+                System.out.println("\tBIENVENIDO " + usuario);
                 System.out.println("1. Subir aqui");
                 System.out.println("2. Salir");
                 //Despliega los archivos en la carpeta
-                System.out.println("Antes de readInt");
+                //System.out.println("Antes de readInt");
                 int NoArchivos = dis.readInt();
-                System.out.println("Despues de int");
+                //System.out.println("Despues de int");
                 String [] archivosListados = new String[NoArchivos];
 
                 for(int i=0; i < NoArchivos; i++){
@@ -174,6 +175,7 @@ public class CEnvia {
             }//while
             System.out.println("\nArchivo enviado..");
             dis2.close();
+            f.delete(); //Se elimina el archivo temporal Files.zip
         }catch(Exception e){
             System.out.println("Error al enviar varios archivos");
             e.printStackTrace();
@@ -207,11 +209,11 @@ public class CEnvia {
             }//while
             System.out.println("\nCarpeta recibida..");
             dis2.close();
+            f.delete(); //Se elimina el archivo temporal Directory.zip
         }catch(Exception e){
             System.out.println("Error al enviar carpeta");
             e.printStackTrace();
         }
-        //Invocar metodo para eliminar Directory.zip
     }
 
     public static void descargarArchivo(DataInputStream dis, DataOutputStream dos, String nombreArchivo){
