@@ -48,10 +48,12 @@ public class SRecibe {
                     //Envio del arreglo de nombres de archivos y carpetas
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
+                    //System.out.println("hola");
                     dos.writeInt(archivos.length);
-                    System.out.println(archivos.length);
-                    dos.flush();
+                    //System.out.println("hola2");
+                    dos.flush(); 
                     for(int i=0; i<archivos.length; i++){
+                        //System.out.println("hola3");
                         dos.writeUTF(archivos[i].getName());
                         dos.flush();
                     }
@@ -138,28 +140,31 @@ public class SRecibe {
         try{
             long tam = dis.readLong();
             System.out.println("Comienza descarga de varios archivos de tamaño total de "+tam+" bytes\n\n");
-            DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+"Files.zip"));
+            File fAux = new File(ruta_archivos+"Files.zip");
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(fAux));
             long recibidos=0;
             int l=0, porcentaje=0;
             while(recibidos<tam){
                 byte[] b = new byte[1500];
                 l = dis.read(b);
-                System.out.println("leidos: "+l);
+                System.out.println("\tleidos: "+l);
                 dos.write(b,0,l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+                System.out.print("Recibido el "+ porcentaje +" % del archivo");
             }//while
             System.out.println("Archivos recibidos..");
             dos.close();
+            Zip zip = new Zip();
+            zip.unzipFiles(ruta_archivos);
+            fAux.delete(); //Se elimina el archivo temporal Files.zip
+            System.out.println("Archivo eliminado");
         }catch(Exception e){
             System.out.println("Error al recibir varios archivos");
             e.printStackTrace();
         }
-        Zip zip = new Zip();
-        zip.unzipFiles(ruta_archivos);
-        //Eliminar con metodo eliminar ruta\Files.zip
+        
     }
 
     public static void recibirCarpeta(DataInputStream dis, String ruta_archivos){
@@ -168,28 +173,30 @@ public class SRecibe {
             nombreCarpeta = dis.readUTF();
             long tam = dis.readLong();
             System.out.println("Comienza descarga de una carpeta de tamaño total de "+tam+" bytes\n\n");
-            DataOutputStream dos = new DataOutputStream(new FileOutputStream(ruta_archivos+"Directory.zip"));
+            File fAux = new File(ruta_archivos+"Directory.zip");
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(fAux));
             long recibidos=0;
             int l=0, porcentaje=0;
             while(recibidos<tam){
                 byte[] b = new byte[1500];
                 l = dis.read(b);
-                System.out.println("leidos: "+l);
+                System.out.println("\tleidos: "+l);
                 dos.write(b,0,l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+                System.out.print("Recibido el "+ porcentaje +" % del archivo");
             }//while
-            System.out.println("Carpeta recibida..");
+            System.out.println("\nCarpeta recibida..");
             dos.close();
+            Zip zip = new Zip();
+            zip.unzipDirectory(ruta_archivos, nombreCarpeta);
+            fAux.delete(); //Se elimina el archivo temporal Directory.zip
         }catch(Exception e){
             System.out.println("Error al recibir una carpeta");
             e.printStackTrace();
         }
-        Zip zip = new Zip();
-        zip.unzipDirectory(ruta_archivos, nombreCarpeta);
-        //Eliminar con metodo eliminar ruta\Directory.zip
+        
     }
 
     public static void enviarArchivoParaDescargar(DataInputStream dis, DataOutputStream dos, String ruta_archivos){
