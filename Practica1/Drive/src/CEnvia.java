@@ -39,9 +39,7 @@ public class CEnvia {
                 System.out.println("1. Subir aqui");
                 System.out.println("2. Salir");
                 //Despliega los archivos en la carpeta
-                System.out.println("Antes de readInt Cliente");
                 int NoArchivos = dis.readInt();
-                System.out.println("Despues de int Cliente");
                 String [] archivosListados = new String[NoArchivos];
 
                 for(int i=0; i < NoArchivos; i++){
@@ -133,14 +131,14 @@ public class CEnvia {
                 while(enviados<tam){
                     byte[] b = new byte[1500];
                     l=dis2.read(b);
-                    System.out.println("enviados: "+l);
+                    //System.out.print(l + " bytes enviados");
                     dos.write(b,0,l);
                     dos.flush();
                     enviados = enviados + l;
                     porcentaje = (int)((enviados*100)/tam);
-                    System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+                    System.out.println(l + " bytes enviados ("+porcentaje+" % del archivo)");
                 }//while
-                System.out.println("\nArchivo enviado..");
+                System.out.println("Archivo enviado..");
                 dis2.close();
             }
         
@@ -166,14 +164,14 @@ public class CEnvia {
             while(enviados<tam){
                 byte[] b = new byte[1500];
                 l=dis2.read(b);
-                System.out.println("enviados: "+l);
+                //System.out.print( l + " bytes enviados");
                 dos.write(b,0,l);
                 dos.flush();
                 enviados = enviados + l;
                 porcentaje = (int)((enviados*100)/tam);
-                System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+                System.out.println(l + " bytes enviado ("+porcentaje+" % del archivo)");
             }//while
-            System.out.println("\nArchivo enviado..");
+            System.out.println("Archivo enviado..");
             dis2.close();
             f.delete(); //Se elimina el archivo temporal Files.zip
         }catch(Exception e){
@@ -200,14 +198,14 @@ public class CEnvia {
             while(enviados<tam){
                 byte[] b = new byte[1500];
                 l=dis2.read(b);
-                System.out.println("enviados: "+l);
+                //System.out.print( l + " bytes enviados");
                 dos.write(b,0,l);
                 dos.flush();
                 enviados = enviados + l;
                 porcentaje = (int)((enviados*100)/tam);
-                System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+                System.out.println(l + " bytes enviados ("+porcentaje+" % del archivo)");
             }//while
-            System.out.println("\nCarpeta recibida..");
+            System.out.println("Carpeta recibida..");
             dis2.close();
             f.delete(); //Se elimina el archivo temporal Directory.zip
         }catch(Exception e){
@@ -234,14 +232,14 @@ public class CEnvia {
                     byte[] b = new byte[1500];
                     l = dis.readInt();
                     dis.read(b,0,l);
-                    System.out.println("\tleidos: "+l);
+                    //System.out.print( l + " bytes leidos");
                     dos2.write(b,0,l);
                     dos2.flush();
                     recibidos = recibidos + l;
                     porcentaje = (int)((recibidos*100)/tam);
-                    System.out.print("Recibido el "+ porcentaje +" % del archivo");
+                    System.out.println(l + " bytes recibidos ("+ porcentaje +" % del archivo)");
                 }//while
-                System.out.println("\nArchivo recibido..");
+                System.out.println("Archivo recibido..");
                 dos2.close();
             }catch(Exception e){
                 System.out.println("Error al descargar");
