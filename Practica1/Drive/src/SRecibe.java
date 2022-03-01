@@ -48,10 +48,10 @@ public class SRecibe {
                     //Envio del arreglo de nombres de archivos y carpetas
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
-                    //System.out.println("hola");
+                    System.out.println("Antes de writeInt Servidor");
                     dos.writeInt(archivos.length);
-                    //System.out.println("hola2");
                     dos.flush(); 
+                    System.out.println("Despues de writeInt Servidor: " + archivos.length);
                     for(int i=0; i<archivos.length; i++){
                         //System.out.println("hola3");
                         dos.writeUTF(archivos[i].getName());
@@ -204,15 +204,17 @@ public class SRecibe {
             String ruta = ruta_archivos + "\\" + dis.readUTF();
             File f = new File(ruta);
             long tam = f.length();
-            DataInputStream dis2 = new DataInputStream(new FileInputStream(ruta));
             dos.writeLong(tam);
             dos.flush();
+            DataInputStream dis2 = new DataInputStream(new FileInputStream(ruta));
             long enviados = 0;
             int l=0,porcentaje=0;
             while(enviados<tam){
                 byte[] b = new byte[1500];
-                l=dis2.read(b);
-                System.out.println("enviados: "+l);
+                l = dis2.read(b);
+                System.out.println("\tenviados: "+l);
+                dos.writeInt(l); //Se envian los bytes a leer
+                dos.flush();
                 dos.write(b,0,l);
                 dos.flush();
                 enviados = enviados + l;
@@ -226,5 +228,5 @@ public class SRecibe {
             e.printStackTrace();
         }
     } 
-
+ 
 }

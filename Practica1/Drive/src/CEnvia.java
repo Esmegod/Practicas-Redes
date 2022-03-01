@@ -39,9 +39,9 @@ public class CEnvia {
                 System.out.println("1. Subir aqui");
                 System.out.println("2. Salir");
                 //Despliega los archivos en la carpeta
-                //System.out.println("Antes de readInt");
+                System.out.println("Antes de readInt Cliente");
                 int NoArchivos = dis.readInt();
-                //System.out.println("Despues de int");
+                System.out.println("Despues de int Cliente");
                 String [] archivosListados = new String[NoArchivos];
 
                 for(int i=0; i < NoArchivos; i++){
@@ -232,17 +232,17 @@ public class CEnvia {
                 int l=0, porcentaje=0;
                 while(recibidos<tam){
                     byte[] b = new byte[1500];
-                    l = dis.read(b);
-                    System.out.println("leidos: "+l);
+                    l = dis.readInt();
+                    dis.read(b,0,l);
+                    System.out.println("\tleidos: "+l);
                     dos2.write(b,0,l);
                     dos2.flush();
                     recibidos = recibidos + l;
                     porcentaje = (int)((recibidos*100)/tam);
-                    System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+                    System.out.print("Recibido el "+ porcentaje +" % del archivo");
                 }//while
-                System.out.println("Archivo recibido..");
+                System.out.println("\nArchivo recibido..");
                 dos2.close();
-
             }catch(Exception e){
                 System.out.println("Error al descargar");
                 e.printStackTrace();
