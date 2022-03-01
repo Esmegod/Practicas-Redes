@@ -48,12 +48,10 @@ public class SRecibe {
                     //Envio del arreglo de nombres de archivos y carpetas
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
-                    System.out.println("hola");
                     dos.writeInt(archivos.length);
-                    System.out.println("hola2");
-                    dos.flush(); 
+                    System.out.println(archivos.length);
+                    dos.flush();
                     for(int i=0; i<archivos.length; i++){
-                        System.out.println("hola3");
                         dos.writeUTF(archivos[i].getName());
                         dos.flush();
                     }
