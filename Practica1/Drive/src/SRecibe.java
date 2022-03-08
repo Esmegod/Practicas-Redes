@@ -48,9 +48,7 @@ public class SRecibe {
                     //Envio del arreglo de nombres de archivos y carpetas
                     File a = new File(ruta_archivos);
                     File [] archivos = a.listFiles();
-                    //System.out.println("hola");
                     dos.writeInt(archivos.length);
-                    //System.out.println("hola2");
                     dos.flush(); 
                     for(int i=0; i<archivos.length; i++){
                         //System.out.println("hola3");
@@ -120,12 +118,12 @@ public class SRecibe {
             while(recibidos<tam){
                 byte[] b = new byte[1500];
                 l = dis.read(b);
-                System.out.println("leidos: "+l);
+                // System.out.print(l + " bytes leidos");
                 dos.write(b,0,l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                System.out.print("\rRecibido el "+ porcentaje +" % del archivo");
+                System.out.println(l + " bytes recibidos ("+ porcentaje +" % del archivo)");
             }//while
             System.out.println("Archivo recibido..");
             dos.close();
@@ -147,19 +145,18 @@ public class SRecibe {
             while(recibidos<tam){
                 byte[] b = new byte[1500];
                 l = dis.read(b);
-                System.out.println("\tleidos: "+l);
+                // System.out.print(l + " bytes leidos");
                 dos.write(b,0,l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                System.out.print("Recibido el "+ porcentaje +" % del archivo");
+                System.out.println(l + " bytes recibido ("+ porcentaje +" % del archivo)");
             }//while
             System.out.println("Archivos recibidos..");
             dos.close();
             Zip zip = new Zip();
             zip.unzipFiles(ruta_archivos);
             fAux.delete(); //Se elimina el archivo temporal Files.zip
-            System.out.println("Archivo eliminado");
         }catch(Exception e){
             System.out.println("Error al recibir varios archivos");
             e.printStackTrace();
@@ -180,14 +177,14 @@ public class SRecibe {
             while(recibidos<tam){
                 byte[] b = new byte[1500];
                 l = dis.read(b);
-                System.out.println("\tleidos: "+l);
+                // System.out.print(l + " bytes leidos");
                 dos.write(b,0,l);
                 dos.flush();
                 recibidos = recibidos + l;
                 porcentaje = (int)((recibidos*100)/tam);
-                System.out.print("Recibido el "+ porcentaje +" % del archivo");
+                System.out.println(l + " bytes recibido ("+ porcentaje +" % del archivo)");
             }//while
-            System.out.println("\nCarpeta recibida..");
+            System.out.println("Carpeta recibida..");
             dos.close();
             Zip zip = new Zip();
             zip.unzipDirectory(ruta_archivos, nombreCarpeta);
@@ -204,27 +201,29 @@ public class SRecibe {
             String ruta = ruta_archivos + "\\" + dis.readUTF();
             File f = new File(ruta);
             long tam = f.length();
-            DataInputStream dis2 = new DataInputStream(new FileInputStream(ruta));
             dos.writeLong(tam);
             dos.flush();
+            DataInputStream dis2 = new DataInputStream(new FileInputStream(ruta));
             long enviados = 0;
             int l=0,porcentaje=0;
             while(enviados<tam){
                 byte[] b = new byte[1500];
-                l=dis2.read(b);
-                System.out.println("enviados: "+l);
+                l = dis2.read(b);
+                // System.out.print( l + " bytes enviados");
+                dos.writeInt(l); //Se envian los bytes a leer
+                dos.flush();
                 dos.write(b,0,l);
                 dos.flush();
                 enviados = enviados + l;
                 porcentaje = (int)((enviados*100)/tam);
-                System.out.print("\rEnviado el "+porcentaje+" % del archivo");
+                System.out.println(l + " bytes enviado ("+porcentaje+" % del archivo)");
             }//while
-            System.out.println("\nDescarga enviada..");
+            System.out.println("Descarga enviada..");
             dis2.close();
         } catch (Exception e){
             System.err.println("Error al enviar descarga");
             e.printStackTrace();
         }
     } 
-
+ 
 }
