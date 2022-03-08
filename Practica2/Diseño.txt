@@ -1,0 +1,19 @@
+Diseño buscaminas 
+
+Requisitoa 
+- Se pueden marcar casillas (poner bandera)
+- El tablero debe ser de 16x16 con 40 minas 
+- Cliente ingresa IP y puerto del servidor
+- Mostrar numero de banderas disponibles y minas 
+ 
+
+¿En que interviene el servidor?
+ - El servidor tiene el tablero pero no se lo envia al cliente 
+ - El servidor recibe posiciones y envia el valor en la casilla(mina, si no, cuantas minas hay alrededor)
+
+- Servidor.java
+	crearTablero() -> MatrizAleatoria 
+	validarPosicion() 
+- Cliente.java
+	enviarPosicion() 	
+- Buscaminas.java
