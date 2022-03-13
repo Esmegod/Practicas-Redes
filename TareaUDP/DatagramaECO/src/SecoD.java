@@ -8,6 +8,7 @@ public class SecoD{
     public static void main(String[] args){
     try{   
         int pto=1234, noPaquete, tPaquetes, tamPaquete, pAnterior=-1;
+        String msj="";
         DatagramSocket s = new DatagramSocket(pto); //Asociar la aplicacion al puerto
         s.setReuseAddress(true); 
         System.out.println("Servidor iniciado... esperando datagramas..");
@@ -25,7 +26,8 @@ public class SecoD{
 
             if(noPaquete == 0) pAnterior = -1;
             if(pAnterior == noPaquete-1){ //Estan llegando en orden 
-                System.out.println("Se ha recibido datagrama " + noPaquete + " de " + tPaquetes + " de tamaño " + tamPaquete + ": " + bMsj.toString());
+                msj = new String(bMsj);
+                System.out.println("Se ha recibido datagrama " + noPaquete + " de " + tPaquetes + " de tamaño " + tamPaquete + ": " + msj);
             }
             else{//No estan llegando en orden
                 System.out.println("Paquete en desorden");
