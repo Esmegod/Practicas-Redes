@@ -33,6 +33,7 @@ public class SecoD{
                 System.out.println("Paquete en desorden");
             }
             pAnterior = noPaquete;
+            dis.close();
 
         }//for
         }catch(Exception e){
