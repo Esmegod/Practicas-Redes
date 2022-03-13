@@ -10,15 +10,10 @@ public class CecoD {
     public static void main(String[] args){
         try{  
             int pto=1234;
-            String dir="2806:2f0:9960:e3d8:9997:e5d3:fd71:4381", msj=""; 
+            String dir="2806:106e:d:8a7:7545:3f26:ae5d:96d", msj=""; 
             InetAddress dst = InetAddress.getByName(dir);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream envioCMeta = new DataOutputStream(baos);
-            
             int tam = 10;
             BufferedReader br= new BufferedReader(new InputStreamReader(System.in)); //
-            
             DatagramSocket cl = new DatagramSocket();
             while(true){
                 System.out.println("Escribe un mensaje, <Enter> para enviar, \"salir\" para terminar");
@@ -33,6 +28,8 @@ public class CecoD {
                     if(b.length>tam){
                         int tp = (int)(b.length/tam);   
                         for(int j=0;j<tp;j++){
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            DataOutputStream envioCMeta = new DataOutputStream(baos);
                             byte[] tmp =Arrays.copyOfRange(b, j*tam, ((j*tam)+(tam)));
                             System.out.println("tmp tam "+tmp.length);
                             envioCMeta.writeInt(j);
@@ -45,10 +42,13 @@ public class CecoD {
                             baos.flush();
                             msj = new String(tmp);
                             System.out.println("Enviando fragmento "+(j)+" de "+tp+" desde:"+(j*tam)+" hasta "+((j*tam)+(tam))+ ": " + msj);
-
+                            baos.close();
+                            envioCMeta.close();
                         }//for
                         if(b.length%tam>0){ //bytes sobrantes  
                             //tp=tp+1;
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            DataOutputStream envioCMeta = new DataOutputStream(baos);
                             int sobrantes = b.length%tam;
                             System.out.println("sobrantes:"+sobrantes);
                             byte[] tmp = Arrays.copyOfRange(b, tp*tam, ((tp*tam)+sobrantes));
@@ -63,10 +63,14 @@ public class CecoD {
                             baos.flush();
                             msj = new String(tmp);
                             System.out.println("Enviando fragmento "+(tp)+" de "+tp+" desde:"+(tp*tam)+" hasta "+((tp*tam)+(tam))+ ": " + msj);
+                            baos.close();
+                            envioCMeta.close();
                             
                         }//for
                     }//if
                     else{
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        DataOutputStream envioCMeta = new DataOutputStream(baos);
                         envioCMeta.writeInt(1);
                         envioCMeta.writeInt(1);
                         envioCMeta.writeInt(b.length);
@@ -77,6 +81,8 @@ public class CecoD {
                         baos.flush();
                         msj = new String(b);
                         System.out.println("Enviando fragmento "+(1)+" de "+1+" desde:"+(0)+" hasta "+(b.length)+ ": " + msj);
+                        baos.close();
+                        envioCMeta.close();
                     }//else
             }//else
         }//while
