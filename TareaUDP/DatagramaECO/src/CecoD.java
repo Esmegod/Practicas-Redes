@@ -16,6 +16,7 @@ public class CecoD {
             BufferedReader br= new BufferedReader(new InputStreamReader(System.in)); //
             DatagramSocket cl = new DatagramSocket();
             while(true){
+                System.out.println("\n\t-----------------------------------------------------------------");
                 System.out.println("Escribe un mensaje, <Enter> para enviar, \"salir\" para terminar");
                 String msj2 = br.readLine();
                 if(msj2.compareToIgnoreCase("salir")==0){
@@ -31,7 +32,6 @@ public class CecoD {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             DataOutputStream envioCMeta = new DataOutputStream(baos);
                             byte[] tmp =Arrays.copyOfRange(b, j*tam, ((j*tam)+(tam)));
-                            System.out.println("tmp tam "+tmp.length);
                             envioCMeta.writeInt(j);
                             envioCMeta.writeInt(tp);
                             envioCMeta.writeInt(tmp.length);
@@ -40,7 +40,7 @@ public class CecoD {
                             DatagramPacket p= new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                             cl.send(p);
                             baos.flush();
-                            msj = new String(tmp);
+                            msj = new String(tmp, "UTF-16");
                             System.out.println("Enviando fragmento "+(j)+" de "+tp+" desde:"+(j*tam)+" hasta "+((j*tam)+(tam))+ ": " + msj);
                             baos.close();
                             envioCMeta.close();
@@ -50,7 +50,6 @@ public class CecoD {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             DataOutputStream envioCMeta = new DataOutputStream(baos);
                             int sobrantes = b.length%tam;
-                            System.out.println("sobrantes:"+sobrantes);
                             byte[] tmp = Arrays.copyOfRange(b, tp*tam, ((tp*tam)+sobrantes));
                             System.out.println("tmp tam "+tmp.length);
                             envioCMeta.writeInt(tp);
@@ -61,7 +60,7 @@ public class CecoD {
                             DatagramPacket p = new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                             cl.send(p);
                             baos.flush();
-                            msj = new String(tmp);
+                            msj = new String(tmp, "UTF-16");
                             System.out.println("Enviando fragmento "+(tp)+" de "+tp+" desde:"+(tp*tam)+" hasta "+((tp*tam)+(tam))+ ": " + msj);
                             baos.close();
                             envioCMeta.close();
@@ -79,7 +78,7 @@ public class CecoD {
                         DatagramPacket p=new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                         cl.send(p);
                         baos.flush();
-                        msj = new String(b);
+                        msj = new String(b, "UTF-16");
                         System.out.println("Enviando fragmento "+(1)+" de "+1+" desde:"+(0)+" hasta "+(b.length)+ ": " + msj);
                         baos.close();
                         envioCMeta.close();
