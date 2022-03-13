@@ -16,6 +16,7 @@ public class Emetadatos {
             dos.writeInt(tmp.length);
             dos.write(tmp);
             dos.flush();
+            
             byte[] b = baos.toByteArray();
             DatagramSocket cl = new DatagramSocket();
             InetAddress dir = InetAddress.getByName("127.0.0.1");

@@ -8,76 +8,77 @@ import java.util.Arrays;
  */
 public class CecoD {
     public static void main(String[] args){
-      try{  
-          int pto=1234;
-          String dir="127.0.0.1";
-          InetAddress dst= InetAddress.getByName(dir);
-          int tam = 10;
-          BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
-          DatagramSocket cl = new DatagramSocket();
-          while(true){
-              System.out.println("Escribe un mensaje, <Enter> para enviar, \"salir\" para terminar");
-              String msj = br.readLine();
-              if(msj.compareToIgnoreCase("salir")==0){
-                  System.out.println("termina programa");
-                  br.close();
-                  cl.close();
-                  System.exit(0);
-              }else{
-                  byte[]b = msj.getBytes();
-                  if(b.length>tam){
-                      byte[]b_eco = new byte[b.length];
-                      System.out.println("b_eco: "+b_eco.length+" bytes");
-                      int tp = (int)(b.length/tam);
-    //                  if(b.length%tam>0)
-    //                      tp=tp+1;
-                      for(int j=0;j<tp;j++){
-                          //byte[] tmp = new byte[tam];
-                          byte []tmp=Arrays.copyOfRange(b, j*tam, ((j*tam)+(tam)));
-                          System.out.println("tmp tam "+tmp.length);
-                          DatagramPacket p= new DatagramPacket(tmp,tmp.length,dst,pto);
-                          cl.send(p);
-                          System.out.println("Enviando fragmento "+(j+1)+" de "+tp+"\ndesde:"+(j*tam)+" hasta "+((j*tam)+(tam)));
-                          DatagramPacket p1= new DatagramPacket(new byte[tam],tam);
-                          cl.receive(p1);
-                          byte[]bp1 = p1.getData();
-                          for(int i=0; i<tam;i++){
-                              System.out.println((j*tam)+i+"->"+i);
-                              b_eco[(j*tam)+i]=bp1[i];
-                          }//for
-                      }//for
-                      if(b.length%tam>0){ //bytes sobrantes  
-                          //tp=tp+1;
-                          int sobrantes = b.length%tam;
-                          System.out.println("sobrantes:"+sobrantes);
-                          System.out.println("b:"+b.length+"ultimo pedazo desde "+tp*tam+" hasta "+((tp*tam)+sobrantes));
-                          byte[] tmp = Arrays.copyOfRange(b, tp*tam, ((tp*tam)+sobrantes));
-                          System.out.println("tmp tam "+tmp.length);
-                          DatagramPacket p = new DatagramPacket(tmp,tmp.length,dst,pto);
-                          cl.send(p);
-                          DatagramPacket p1= new DatagramPacket(new byte[tam],tam);
-                          cl.receive(p1);
-                          byte[]bp1 = p1.getData();
-                          for(int i=0; i<sobrantes;i++){
-                              System.out.println((tp*tam)+i+"->"+i);
-                              b_eco[(tp*tam)+i]=bp1[i];
-                          }//for
-                      }//if
+        try{  
+            int pto=1234;
+            String dir="2806:2f0:9960:e3d8:9997:e5d3:fd71:4381"; 
+            InetAddress dst = InetAddress.getByName(dir);
 
-                      String eco = new String(b_eco);
-                      System.out.println("Eco recibido: "+eco);
-                  }else{
-                      DatagramPacket p=new DatagramPacket(b,b.length,dst,pto);
-                      cl.send(p);
-                      DatagramPacket p1 = new DatagramPacket(new byte[65535],65535);
-                      cl.receive(p1);
-                      String eco = new String(p1.getData(),0,p1.getLength());
-                      System.out.println("Eco recibido: "+eco);
-                  }//else
-              }//else
-          }//while
-      }catch(Exception e){
-          e.printStackTrace();
-      }//catch
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream envioCMeta = new DataOutputStream(baos);
+            
+            int tam = 10;
+            BufferedReader br= new BufferedReader(new InputStreamReader(System.in)); //
+            
+            DatagramSocket cl = new DatagramSocket();
+            while(true){
+                System.out.println("Escribe un mensaje, <Enter> para enviar, \"salir\" para terminar");
+                String msj = br.readLine();
+                if(msj.compareToIgnoreCase("salir")==0){
+                    System.out.println("termina programa");
+                    br.close();
+                    cl.close();
+                    System.exit(0);
+                }else{
+                    byte[] b = msj.getBytes();
+                    if(b.length>tam){
+                        int tp = (int)(b.length/tam);   
+                        for(int j=0;j<tp;j++){
+                            byte[] tmp =Arrays.copyOfRange(b, j*tam, ((j*tam)+(tam)));
+                            System.out.println("tmp tam "+tmp.length);
+                            envioCMeta.writeInt(j);
+                            envioCMeta.writeInt(tp);
+                            envioCMeta.writeInt(tmp.length);
+                            envioCMeta.write(tmp);
+                            envioCMeta.flush();
+                            DatagramPacket p= new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
+                            cl.send(p);
+                            baos.flush();
+                            System.out.println("Enviando fragmento "+(j)+" de "+tp+" desde:"+(j*tam)+" hasta "+((j*tam)+(tam))+ ": " + tmp.toString());
+
+                        }//for
+                        if(b.length%tam>0){ //bytes sobrantes  
+                            //tp=tp+1;
+                            int sobrantes = b.length%tam;
+                            System.out.println("sobrantes:"+sobrantes);
+                            byte[] tmp = Arrays.copyOfRange(b, tp*tam, ((tp*tam)+sobrantes));
+                            System.out.println("tmp tam "+tmp.length);
+                            envioCMeta.writeInt(tp);
+                            envioCMeta.writeInt(tp);
+                            envioCMeta.writeInt(tmp.length);
+                            envioCMeta.write(tmp);
+                            envioCMeta.flush();
+                            DatagramPacket p = new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
+                            cl.send(p);
+                            baos.flush();
+                            System.out.println("Enviando fragmento "+(tp)+" de "+tp+" desde:"+(tp*tam)+" hasta "+((tp*tam)+(tam))+ ": " + tmp.toString());
+                            
+                        }//for
+                    }//if
+                    else{
+                        envioCMeta.writeInt(1);
+                        envioCMeta.writeInt(1);
+                        envioCMeta.writeInt(b.length);
+                        envioCMeta.write(b);
+                        envioCMeta.flush();
+                        DatagramPacket p=new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
+                        cl.send(p);
+                        baos.flush();
+                        System.out.println("Enviando fragmento "+(1)+" de "+1+" desde:"+(0)+" hasta "+(b.length)+ ": " + b.toString());
+                    }//else
+            }//else
+        }//while
+    }catch(Exception e){
+        e.printStackTrace();
+    }//catch
     }//main
 }
