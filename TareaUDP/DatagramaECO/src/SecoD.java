@@ -26,13 +26,13 @@ public class SecoD{
 
             if(noPaquete == 0) pAnterior = -1;
             if(pAnterior == noPaquete-1){ //Estan llegando en orden 
-                msj = new String(bMsj,"UTF-16");
+                msj = new String(bMsj,"UTF-8");
                 System.out.println("Se ha recibido datagrama " + noPaquete + " de " + tPaquetes + " de tamaño " + tamPaquete + ": " + msj);
             }
             else{//No estan llegando en orden
                 System.out.println("---------------------");
                 System.out.println("Paquete en desorden");
-                msj = new String(bMsj, "UTF-16");
+                msj = new String(bMsj, "UTF-8");
                 System.out.println("Se ha recibido datagrama " + noPaquete + " de " + tPaquetes + " de tamaño " + tamPaquete + ": " + msj);
                 System.out.println("---------------------");
             }
