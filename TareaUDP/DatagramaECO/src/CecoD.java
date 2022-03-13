@@ -40,7 +40,7 @@ public class CecoD {
                             DatagramPacket p= new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                             cl.send(p);
                             baos.flush();
-                            msj = new String(tmp, "UTF-16");
+                            msj = new String(tmp, "UTF-8");
                             System.out.println("Enviando fragmento "+(j)+" de "+tp+" desde:"+(j*tam)+" hasta "+((j*tam)+(tam))+ ": " + msj);
                             baos.close();
                             envioCMeta.close();
@@ -60,7 +60,7 @@ public class CecoD {
                             DatagramPacket p = new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                             cl.send(p);
                             baos.flush();
-                            msj = new String(tmp, "UTF-16");
+                            msj = new String(tmp, "UTF-8");
                             System.out.println("Enviando fragmento "+(tp)+" de "+tp+" desde:"+(tp*tam)+" hasta "+((tp*tam)+(tam))+ ": " + msj);
                             baos.close();
                             envioCMeta.close();
@@ -78,7 +78,7 @@ public class CecoD {
                         DatagramPacket p=new DatagramPacket(baos.toByteArray(),baos.toByteArray().length,dst,pto);
                         cl.send(p);
                         baos.flush();
-                        msj = new String(b, "UTF-16");
+                        msj = new String(b, "UTF-8");
                         System.out.println("Enviando fragmento "+(1)+" de "+1+" desde:"+(0)+" hasta "+(b.length)+ ": " + msj);
                         baos.close();
                         envioCMeta.close();
