@@ -1,0 +1,58 @@
+							
+2 opciones: 
+	2.1 El servidor envía todo el tablero en cada comunicación con toda la metainformacion (No optimo y 
+	quizá pierde razón de ser con sockets)
+	2.2 El servidor envía solo las coordenadas de las celdas a mostrar y su valor (Optimo pero el problema 
+	sería cuando se selecciona una celda con valor 0 se deben desplegar otras además de la seleccionada, pensar
+	solución) (Con solución 2.2 no se ve tan mal)
+
+2.2 Solución: Envíar un arreglo ArrayList de la clase celda (Solo las que tienen visibilt true, es decir, las celdas afectadas por
+la selección) y en el cliente iterarlo para obtener sus coordenadas y mostrar su valor.
+
+Class Celda implements Serializable{
+	bool visibility: true o false;
+	int valor: mina o número;
+	bool isflag (o no sé otro nombre jaja): true o false (si tiene marcada la bandera, es necesario para no perder el valor
+										en caso de que sea un número a menos que se calculen en la ejecución
+										pero yo no veo esto ultimo bien)
+	int x; //Solo para solucion 2.2
+	int y; //Solo para solucion 2.2
+	Setters and Getters
+}
+
+crearTablero(): El tablero (En el servidor) que sea un arreglo bidimencional de la clase Celda
+
+Servidor:
+	-Crea arreglo bidimensional de 16x16 de clase Celda
+	-Inicializa el tablero (Genera minas y números)
+	-valida selección (verifica si es mina, número)
+	-Envía el tablero o el arreglo de celdas
+
+Cliente:
+	-Envía coordenadas de selección
+	-Recibe e itera el tablero o arreglo de celdas a mostrar
+
+
+	Cliente							Servidor
+	EnviaPaqueteInitGame() --------------------> 
+	   |								Inicializa el tablero (y lo asocia a la ip si aceptará más conexiones).
+	   |	                                       
+	EnviarPosicion(); --------------------->	  
+	   |								validarPosicion(): (modifica la 
+	   |								visibilidad de las celdas)
+         							   
+	   	<--------------------------------- Envía tablero o arreglo de celdas visibles
+        
+	Itera la respuesta y muestra
+	los cambios en su grid y se repite
+	enviarPosicion();
+
+-----------------------------------------------------------------------------------------------------------
+Si el servidor va a poder aceptar más de una conexion al mismo tiempo
+entonces el servidor identificará el tablero por la ip del remitente del paquete 
+¿cómo identifica el tablero?
+Con HashMap?
+HashMap<String, Celda[][]> tableros = new HashMap();
+tableros.put(ip.toString(), tablero);
+
+tablero = tableros.get(ip.toString());

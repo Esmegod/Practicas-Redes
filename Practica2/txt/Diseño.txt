@@ -1,6 +1,6 @@
 Diseño buscaminas 
 
-Requisitoa 
+Requisito
 - Se pueden marcar casillas (poner bandera)
 - El tablero debe ser de 16x16 con 40 minas 
 - Cliente ingresa IP y puerto del servidor
