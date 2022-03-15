@@ -23,7 +23,7 @@ public class Cliente{
            //Enviar paquete
             ByteArrayOutputStream baos  = new ByteArrayOutputStream();
             DataOutputStream envioC = new DataOutputStream(baos);
-            envioC.writeBoolean(true);
+            envioC.writeBoolean(true); //initGame
             envioC.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, this.ip, this.puerto);
             cl.send(p);
@@ -35,14 +35,15 @@ public class Cliente{
         }
     }
 
-    public void enviarCoordenadas(int x, int y) {
+    public void enviarCoordenadas(int x, int y, boolean marcaBandera) {
         try{            
            //Enviar paquete
             ByteArrayOutputStream baos  = new ByteArrayOutputStream();
             DataOutputStream envioC = new DataOutputStream(baos);
-            envioC.writeBoolean(false);
+            envioC.writeBoolean(false); //InitGame
             envioC.writeInt(x);
             envioC.writeInt(y);
+            envioC.writeBoolean(marcaBandera);
             envioC.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, this.ip, this.puerto);
             cl.send(p);
@@ -53,4 +54,6 @@ public class Cliente{
             e.printStackTrace();
         }
     }
+
+    
 }

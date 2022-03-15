@@ -1,8 +1,10 @@
 import javax.swing.*;
+
+import javax.swing.SwingUtilities;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Buscaminas extends JFrame implements ActionListener{
+public class Buscaminas extends JFrame implements MouseListener{
     JLabel banderasLabel, banderaIconoLabel;
     JButton [][] botones;
     static Cliente cliente;
@@ -44,7 +46,7 @@ public class Buscaminas extends JFrame implements ActionListener{
                 //Colocar en el panel
                 tablero.add(botones[i][j]);
                 //	Action Listener
-                botones[i][j].addActionListener(this);
+                botones[i][j].addMouseListener(this);
                 
 			}
         tablero.setBackground(Color.WHITE);
@@ -54,13 +56,36 @@ public class Buscaminas extends JFrame implements ActionListener{
         setVisible(true);
     }
 
+    
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void mouseClicked(java.awt.event.MouseEvent e) {
         String coordenadas = ((JButton)e.getSource()).getName();
-        int x = Integer.parseInt(coordenadas.split("-")[0]);
-        int y = Integer.parseInt(coordenadas.split("-")[1]);
-        cliente.enviarCoordenadas(x,y);
+        if(SwingUtilities.isRightMouseButton(e)){//Se marca bandera
+            int x = Integer.parseInt(coordenadas.split("-")[0]);
+            int y = Integer.parseInt(coordenadas.split("-")[1]);
+            cliente.enviarCoordenadas(x,y,true);
+            
+        }else{
+            if(SwingUtilities.isLeftMouseButton(e)){//Se muestra valor
+                int x = Integer.parseInt(coordenadas.split("-")[0]);
+                int y = Integer.parseInt(coordenadas.split("-")[1]);
+                cliente.enviarCoordenadas(x,y, false);
+            }
+        }
+
     }
+
+    @Override
+    public void mousePressed(java.awt.event.MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(java.awt.event.MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(java.awt.event.MouseEvent e) {}
+
+    @Override
+    public void mouseExited(java.awt.event.MouseEvent e) {}
 
     public static void main(String[] args) {
         //Mostrar ventana para ip y puerto
@@ -68,4 +93,5 @@ public class Buscaminas extends JFrame implements ActionListener{
         Buscaminas b = new Buscaminas();
         b.buscaminas();
     }
+
 }
