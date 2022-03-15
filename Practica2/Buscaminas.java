@@ -56,14 +56,15 @@ public class Buscaminas extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println(((JButton)e.getSource()).getName());
-        cliente.enviarPaquete(0,0);
-
+        String coordenadas = ((JButton)e.getSource()).getName();
+        int x = Integer.parseInt(coordenadas.split("-")[0]);
+        int y = Integer.parseInt(coordenadas.split("-")[1]);
+        cliente.enviarCoordenadas(x,y);
     }
 
     public static void main(String[] args) {
         //Mostrar ventana para ip y puerto
-        cliente = new Cliente(0, "");
+        cliente = new Cliente(1234, "127.0.0.1");
         Buscaminas b = new Buscaminas();
         b.buscaminas();
     }

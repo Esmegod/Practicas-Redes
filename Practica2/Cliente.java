@@ -7,28 +7,50 @@ public class Cliente{
     DatagramSocket cl;
     
     public Cliente(int puerto, String ipS){
-        
         try{
             cl = new DatagramSocket();
             this.puerto = puerto;
-            ip = InetAddress.getByName(ipS);
+            this.ip = InetAddress.getByName(ipS);
+            initJuego();
         }
         catch(Exception e){
             e.printStackTrace();
-        }
-        
+        } 
     }
 
-    public void enviarPaquete(int x, int y) {
-            
+    public void initJuego(){
         try{            
            //Enviar paquete
- 
+            ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+            DataOutputStream envioC = new DataOutputStream(baos);
+            envioC.writeBoolean(true);
+            envioC.flush();
+            DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, this.ip, this.puerto);
+            cl.send(p);
+            baos.close();
+            envioC.close();
         }catch(Exception e){
-            System.out.println("Error al ejecutar Buscaminas");
+            System.out.println("Error al enviar paquete inicial");
             e.printStackTrace();
         }
-        
-        
+    }
+
+    public void enviarCoordenadas(int x, int y) {
+        try{            
+           //Enviar paquete
+            ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+            DataOutputStream envioC = new DataOutputStream(baos);
+            envioC.writeBoolean(false);
+            envioC.writeInt(x);
+            envioC.writeInt(y);
+            envioC.flush();
+            DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, this.ip, this.puerto);
+            cl.send(p);
+            baos.close();
+            envioC.close();
+        }catch(Exception e){
+            System.out.println("Error al enviar coordenadas");
+            e.printStackTrace();
+        }
     }
 }
