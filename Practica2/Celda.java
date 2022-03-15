@@ -1,4 +1,6 @@
-public class Celda {
+import java.io.Serializable;
+
+public class Celda implements Serializable{
     boolean bomba; // True: Ya hay bomba. False: No hay bomba
     boolean visibilidad;
     int valor;

@@ -1,4 +1,5 @@
 import java.net.*;
+import java.util.ArrayList;
 import java.io.*;
 
 public class Cliente{
@@ -53,6 +54,26 @@ public class Cliente{
             System.out.println("Error al enviar coordenadas");
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Celda>  recibirCeldas() {
+        ArrayList<Celda> celdas = new ArrayList<Celda>();
+        try{
+            byte[] b = new byte[65535];
+            DatagramPacket p = new DatagramPacket(b, b.length);
+            this.cl.receive(p);
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
+            Object obj = ois.readObject(); //Se lee el objeto
+            if(obj instanceof ArrayList<?>){ //Se verifica si el objeto recibido es de tipo ArrayList
+                for(Object o: (ArrayList<?>)obj){ //Se itera cada elemento del ArrayList
+                    celdas.add((Celda)o); //Se castea cada elemento del arrayList a tipo Celda
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Error al recibir celdas");
+            e.printStackTrace();
+        }
+        return celdas;
     }
 
     

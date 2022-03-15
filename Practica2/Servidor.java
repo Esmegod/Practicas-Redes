@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Servidor {
 
@@ -49,33 +50,23 @@ public class Servidor {
         }
     }
 
-    public static Celda[] jugada(int x, int y, boolean marcaBandera, Celda[][] tablero){
-        /*
-            Metodo para realizar la jugada
-            Objetivo: Enviar un arreglo de celdas que se mostraran en el cliente por jugada
-            Si es una bandera 
-                actualizar celda 
-                El arreglo de celdas que se envia estará vacio 
-            Si no se pone una bandera
-                Comprobar si hay una bomba 
-                Si hay una bomba 
-                    
-                Si no 
-        */
-
-        /*
-        Cliente         Servidor
-        
-                        
-        */
-        
-        if(marcaBandera){//Se marca la casilla con bandera
-            
-            
+    public static ArrayList<Celda> jugada(int x, int y, boolean marcaBandera, Celda[][] tablero){
+        ArrayList<Celda> celdas = new ArrayList<Celda>();
+        tablero[x][y].x = x;
+        tablero[x][y].y = y;
+        if(marcaBandera){
+            tablero[x][y].bandera = true;
+            celdas.add(tablero[x][y]);
         }else{//Se realiza jugada
-
+            /*
+                if valor > 0 -> Agregar a ArrayList Celdas
+                else mostrar adyacentes -> public ArrayList<Celda> determinarAdyacentes(int x, int y){
+                                                    if valor==0
+                                                    determinarAdyacentes recursivo?
+                                                }
+            */
         }
-        return null;
+        return celdas;
     }
     
     public static void main(String[] args) {
@@ -98,16 +89,30 @@ public class Servidor {
                     int x = dis.readInt();
                     int y = dis.readInt();
                     boolean marcaBandera = dis.readBoolean(); 
-                    jugada(x, y, marcaBandera, tablero);
+                    ArrayList<Celda> celdas = jugada(x, y, marcaBandera, tablero); //Se obtienen las celdas afectadas por la jugada
+                    enviarCeldas(p.getAddress(), p.getPort(), celdas, s); //Se envia el arreglo de celdas al cliente
                 }
-
             }
-            
         }catch(Exception e){
             System.out.println("Error al iniciar servidor");
             e.printStackTrace();
         }    
     }
+
+    //Metodo para enviar las celdas
+    public static void enviarCeldas(InetAddress ip, int puerto, ArrayList<Celda> celdas, DatagramSocket s){
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(celdas);
+            oos.flush();
+            DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, ip, puerto);
+            s.send(p);
+        } catch (IOException e) {
+            System.out.println("Error al enviar celdas");
+            e.printStackTrace();
+        }
+    }   
 
     
 
