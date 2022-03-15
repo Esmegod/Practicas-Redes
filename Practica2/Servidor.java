@@ -23,8 +23,10 @@ public class Servidor {
                 //Se calculan los valores adyacentes
                 for(int j=x-1; j<=x+1; j++){
                     for(int k=y-1; k<=y+1; k++){
-                        if(!tablero[j][k].bomba){
-                            tablero[j][k].valor += 1;
+                        if(!(j<0 || j>15 || k<0 || k>15)){
+                            if(!tablero[j][k].bomba){
+                                tablero[j][k].valor += 1;
+                            }
                         }
                     }
                 }
