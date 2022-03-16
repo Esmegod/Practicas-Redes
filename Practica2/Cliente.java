@@ -12,6 +12,7 @@ public class Cliente{
             cl = new DatagramSocket();
             this.puerto = puerto;
             this.ip = InetAddress.getByName(ipS);
+            cl.setSoTimeout(5000);
             initJuego();
         }
         catch(Exception e){
@@ -36,7 +37,7 @@ public class Cliente{
         }
     }
 
-    public void enviarCoordenadas(int x, int y, boolean marcaBandera) {
+    public void enviarCoordenadas(int x, int y) {
         try{            
            //Enviar paquete
             ByteArrayOutputStream baos  = new ByteArrayOutputStream();
@@ -44,7 +45,6 @@ public class Cliente{
             envioC.writeBoolean(false); //InitGame
             envioC.writeInt(x);
             envioC.writeInt(y);
-            envioC.writeBoolean(marcaBandera);
             envioC.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, this.ip, this.puerto);
             cl.send(p);
@@ -69,12 +69,11 @@ public class Cliente{
                     celdas.add((Celda)o); //Se castea cada elemento del arrayList a tipo Celda
                 }
             }
+            ois.close();
         }catch(Exception e){
             System.out.println("Error al recibir celdas");
-            e.printStackTrace();
         }
         return celdas;
     }
-
     
 }

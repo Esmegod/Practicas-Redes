@@ -2,7 +2,7 @@ import java.io.Serializable;
 
 public class Celda implements Serializable{
     boolean bomba; // True: Ya hay bomba. False: No hay bomba
-    boolean visibilidad;
+    boolean adyacenciaEncontrada;
     int valor;
     boolean bandera;
     int x;
@@ -10,7 +10,7 @@ public class Celda implements Serializable{
 
     public Celda(){
         this.bomba = false;
-        this.visibilidad = false;
+        this.adyacenciaEncontrada = false;
         this.valor = 0;
         this.bandera = false;
         this.x = -1;

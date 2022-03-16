@@ -10,6 +10,8 @@ public class Servidor {
         for(int i=0; i<16; i++){
             for(int j=0; j<16; j++){
                 tablero[i][j] = new Celda();
+                tablero[i][j].x = i;
+                tablero[i][j].y = j;
             }
         }
         int x,y;
@@ -19,8 +21,6 @@ public class Servidor {
             y = (int)(Math.random()*16);
             if(!tablero[x][y].bomba){
                 tablero[x][y].bomba = true;
-                tablero[x][y].x = x;
-                tablero[x][y].y = y;
                 //Se calculan los valores adyacentes
                 for(int j=x-1; j<=x+1; j++){
                     for(int k=y-1; k<=y+1; k++){
@@ -50,23 +50,36 @@ public class Servidor {
         }
     }
 
-    public static ArrayList<Celda> jugada(int x, int y, boolean marcaBandera, Celda[][] tablero){
+    public static ArrayList<Celda> jugada(int x, int y, Celda[][] tablero){
+        //Objetivo: Enviar celdas que se revelan 
         ArrayList<Celda> celdas = new ArrayList<Celda>();
-        tablero[x][y].x = x;
-        tablero[x][y].y = y;
-        if(marcaBandera){
-            tablero[x][y].bandera = true;
+        if(tablero[x][y].bomba){//Si es bomba se envía para que pierda 
             celdas.add(tablero[x][y]);
-        }else{//Se realiza jugada
-            /*
-                if valor > 0 -> Agregar a ArrayList Celdas
-                else mostrar adyacentes -> public ArrayList<Celda> determinarAdyacentes(int x, int y){
-                                                    if valor==0
-                                                    determinarAdyacentes recursivo?
-                                                }
-            */
+        }else{//Si la celda es un numero se valida la jugada
+            if(tablero[x][y].valor > 0){//Si es numero se muestra
+                celdas.add(tablero[x][y]);
+            }else{ //Si es cero se obtienen sus adyacentes
+                obtenerAdyacentes(x,y,celdas, tablero);
+            } 
         }
         return celdas;
+    }
+
+
+    public static void obtenerAdyacentes(int x, int y, ArrayList<Celda> adyacentes, Celda[][] tablero){
+        for(int i=x-1; i<=x+1;i++){
+            for(int j=y-1; j<=y+1; j++){
+                if(!(i<0 || i>15 || j<0 || j>15)){
+                    if(!tablero[i][j].bomba){
+                        adyacentes.add(tablero[i][j]);
+                        if(tablero[i][j].valor==0 && !tablero[i][j].adyacenciaEncontrada){
+                            tablero[i][j].adyacenciaEncontrada = true;
+                            obtenerAdyacentes(i, j, adyacentes, tablero);
+                        }
+                    }
+                }
+            }
+        }
     }
     
     public static void main(String[] args) {
@@ -81,6 +94,7 @@ public class Servidor {
                 byte[] b = new byte[20];
                 DatagramPacket p = new DatagramPacket(b, b.length);
                 s.receive(p);
+                s.connect(p.getAddress(), p.getPort());
                 DataInputStream dis = new DataInputStream(new ByteArrayInputStream(p.getData()));
                 if(dis.readBoolean()){ //Es un nuevo juego 
                     tablero = crearTablero();
@@ -88,10 +102,14 @@ public class Servidor {
                 }else{ //Es una jugada
                     int x = dis.readInt();
                     int y = dis.readInt();
-                    boolean marcaBandera = dis.readBoolean(); 
-                    ArrayList<Celda> celdas = jugada(x, y, marcaBandera, tablero); //Se obtienen las celdas afectadas por la jugada
-                    enviarCeldas(p.getAddress(), p.getPort(), celdas, s); //Se envia el arreglo de celdas al cliente
+                    if(x==-1 && y==-1){//Se termina el juego
+                        s.disconnect(); 
+                    }else{
+                        ArrayList<Celda> celdas = jugada(x, y, tablero); //Se obtienen las celdas afectadas por la jugada
+                        enviarCeldas(p.getAddress(), p.getPort(), celdas, s); //Se envia el arreglo de celdas al cliente
+                    }
                 }
+                dis.close();
             }
         }catch(Exception e){
             System.out.println("Error al iniciar servidor");
@@ -108,6 +126,8 @@ public class Servidor {
             oos.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, ip, puerto);
             s.send(p);
+            baos.close();
+            oos.close();
         } catch (IOException e) {
             System.out.println("Error al enviar celdas");
             e.printStackTrace();
