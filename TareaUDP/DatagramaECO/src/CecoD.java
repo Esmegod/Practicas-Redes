@@ -10,7 +10,7 @@ public class CecoD {
     public static void main(String[] args){
         try{  
             int pto=1234;
-            String dir="2806:106e:d:8a7:7545:3f26:ae5d:96d", msj=""; 
+            String dir="127.0.0.1", msj=""; 
             InetAddress dst = InetAddress.getByName(dir);
             int tam = 10;
             BufferedReader br= new BufferedReader(new InputStreamReader(System.in)); //
