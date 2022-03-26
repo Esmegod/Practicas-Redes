@@ -44,6 +44,7 @@ public class Chat extends JFrame{
         scroll.setBorder(BorderFactory.createMatteBorder(0,0,2,2,gris));
         scroll.setViewportView(editorPane);
         editorPane.setBackground(Color.white);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setBounds(0,0,550,300);
         getContentPane().add(scroll);
 
@@ -53,7 +54,7 @@ public class Chat extends JFrame{
         comboLabel.setBounds(10, 8, 100, 30);
         areaMensajes.add(comboLabel);
 
-        JComboBox usuariosPrivados = new JComboBox<String>();
+        JComboBox<String> usuariosPrivados = new JComboBox<>();
         usuariosPrivados.setBounds(80, 8, 100, 30);
         areaMensajes.add(usuariosPrivados);
         usuariosPrivados.addItem("Todos");
@@ -66,22 +67,19 @@ public class Chat extends JFrame{
         emojiButton.setBounds(650, 8, 30, 30);
         areaMensajes.add(emojiButton);
         
-        JButton imagenButton = new JButton("Imagen");
+        JButton imagenButton = new JButton();
         ImageIcon imagenIcon = new ImageIcon("../img/gallery.png");
         imagenButton.setIcon(new ImageIcon(imagenIcon.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
         imagenButton.setBounds(680, 8, 30, 30);
         areaMensajes.add(imagenButton);
         
-        JButton microButton = new JButton("Audio");
+        JButton microButton = new JButton();
         ImageIcon microIcon = new ImageIcon("../img/microphone.png");
         microButton.setIcon(new ImageIcon(microIcon.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
         microButton.setBounds(710, 8, 30, 30);
         areaMensajes.add(microButton);
         
         JTextField mensaje = new JTextField();
-        
-        
-        
 
         
         add(areaChat);
