@@ -46,10 +46,10 @@ public class CHMM {
           //InetAddress gpo = InetAddress.getByName("ff3e:40:2001::1");
           SocketAddress dir;
             try{
-                 dir = new InetSocketAddress(gpo,pto);
+                  dir = new InetSocketAddress(gpo,pto);
             }catch(Exception e){
               System.err.println("Sintaxis: java UDPEchoClient host [port]");
-               return;
+                return;
             }//catch
 
  

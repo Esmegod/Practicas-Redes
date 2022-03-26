@@ -29,20 +29,20 @@ String mensaje_inicio="",mensaje_medio="",mensaje_final="";
         path=ruta;
         mensaje_inicio= "<head><base href=\"file:"+ruta+"\\\">"+
                 "<style>#usuarios {"+
-                  "font-family: Arial, Helvetica, sans-serif;"+
-                  "border-collapse: collapse;"+
-                  "width: 100%;"+
+                "font-family: Arial, Helvetica, sans-serif;"+
+                "border-collapse: collapse;"+
+                "width: 100%;"+
                 "} #usuarios td, #usuarios th {"+
-                  "border: 0px solid #ddd;"+
-                 " padding: 8px;"+
+                "border: 0px solid #ddd;"+
+                " padding: 8px;"+
                 "}#usuarios tr:nth-child(even){background-color: #f2f2f2;}"+
                 "#usuarios tr:hover {background-color: #ddd;}"+
                 "#usuarios th {"+
-                 " padding-top: 12px;"+
-                  "padding-bottom: 12px;"+
-                  "text-align: left;"+
-                  "background-color: #04AA6D;"+
-                  "color: white;}"+
+                " padding-top: 12px;"+
+                "padding-bottom: 12px;"+
+                "text-align: left;"+
+                "background-color: #04AA6D;"+
+                "color: white;}"+
                 "</style>"+
                 "</head>"+ 
                 "<table id=\"usuarios\">\n";
