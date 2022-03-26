@@ -48,12 +48,39 @@ public class Chat extends JFrame{
         getContentPane().add(scroll);
 
         //Area Mensaje
-        areaMensajes.setLayout(new BorderLayout());
-        JButton emojiButton = new JButton("Emoji");
-        areaMensajes.add(emojiButton, BorderLayout.NORTH);
+        areaMensajes.setLayout(null);
+        JLabel comboLabel = new JLabel("Enviar a:");
+        comboLabel.setBounds(10, 8, 100, 30);
+        areaMensajes.add(comboLabel);
+
+        JComboBox usuariosPrivados = new JComboBox<String>();
+        usuariosPrivados.setBounds(80, 8, 100, 30);
+        areaMensajes.add(usuariosPrivados);
+        usuariosPrivados.addItem("Todos");
+        usuariosPrivados.addItem("Esme");
+        usuariosPrivados.addItem("Fer"); 
+
+        JButton emojiButton = new JButton();
+        ImageIcon emojiIcon = new ImageIcon("../img/smile.png");
+        emojiButton.setIcon(new ImageIcon(emojiIcon.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+        emojiButton.setBounds(650, 8, 30, 30);
+        areaMensajes.add(emojiButton);
+        
+        JButton imagenButton = new JButton("Imagen");
+        ImageIcon imagenIcon = new ImageIcon("../img/gallery.png");
+        imagenButton.setIcon(new ImageIcon(imagenIcon.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+        imagenButton.setBounds(680, 8, 30, 30);
+        areaMensajes.add(imagenButton);
+        
+        JButton microButton = new JButton("Audio");
+        ImageIcon microIcon = new ImageIcon("../img/microphone.png");
+        microButton.setIcon(new ImageIcon(microIcon.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+        microButton.setBounds(710, 8, 30, 30);
+        areaMensajes.add(microButton);
+        
         JTextField mensaje = new JTextField();
-        mensaje.setSize();
-        areaMensajes.add(mensaje);
+        
+        
         
 
         
@@ -67,28 +94,28 @@ public class Chat extends JFrame{
 
 }
 
-class Recibe extends Thread {
-    MulticastSocket socket;
+// class Recibe extends Thread {
+//     MulticastSocket socket;
 
-    public Recibe(MulticastSocket m) {
-        this.socket = m;
-    }
+//     public Recibe(MulticastSocket m) {
+//         this.socket = m;
+//     }
 
-    public void run() {
-        try {
-            String mensaje_medio = ""; 
-            for (;;) {
-                DatagramPacket p = new DatagramPacket(new byte[65535], 65535);
-                socket.receive(p);
-                mensaje_medio += new String(p.getData(), 0, p.getLength());
+//     public void run() {
+//         try {
+//             String mensaje_medio = ""; 
+//             for (;;) {
+//                 DatagramPacket p = new DatagramPacket(new byte[65535], 65535);
+//                 socket.receive(p);
+//                 mensaje_medio += new String(p.getData(), 0, p.getLength());
                 
-                //SetText
+//                 //SetText
                 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-    }
+//             }
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//         } 
+//     }
 
-}
+// }
 

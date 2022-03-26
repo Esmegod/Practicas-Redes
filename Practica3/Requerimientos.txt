@@ -1,0 +1,7 @@
+Requisitos funcionales
+- Un usuario puede mandar mensajes privados
+- Un usuario puede mandar mensajes a todos los de la sala(sockets de multidifución)
+- Un usuario puede enviar emoticones
+- Un usuario puede mandar imagenes 
+- Un usuario puede mandar mensajes de audio 
+- En el chat del usuario deben visualizarse una lista de usuarios en línea
