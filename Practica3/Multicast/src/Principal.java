@@ -1,12 +1,10 @@
+/*
 import java.net.*;
 import java.io.*;
 import java.util.Collections;
 import java.util.Enumeration;
 
-/**
- *
- * @author Axel
- */
+
 class Envia extends Thread {
     MulticastSocket socket;
     BufferedReader br;
@@ -38,6 +36,7 @@ class Envia extends Thread {
     }// run
 }// class
 
+
 class Recibe extends Thread {
     MulticastSocket socket;
 
@@ -61,6 +60,8 @@ class Recibe extends Thread {
     }// run
 
 }// class
+
+
 
 public class Principal {
 
@@ -120,3 +121,4 @@ public class Principal {
         }
     }// main
 }
+*/
