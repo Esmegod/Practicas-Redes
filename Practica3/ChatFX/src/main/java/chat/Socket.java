@@ -17,10 +17,10 @@ public class Socket {
             m.setReuseAddress(true);
             m.setTimeToLive(255);
             m.joinGroup(ip);
-            
-            String anuncio = usuario + "se ha unido al chat";
+       
+            String anuncio = usuario + " se ha unido al chat";
             byte [] b = anuncio.getBytes();
-            DatagramPacket p = new DatagramPacket(b, b.length);
+            DatagramPacket p = new DatagramPacket(b, b.length, ip, 4000);
             m.send(p);
         }catch(Exception e){
             e.printStackTrace();

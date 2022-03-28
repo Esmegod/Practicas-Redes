@@ -16,6 +16,8 @@ class Recibe extends Thread {
         ".nombre{padding-left: 55px;color:  #b0b0b8;margin-bottom: 5px;}"+
         ".avatar{height: 30px;width: 30px;padding: 5px;border-radius: 100%;}"+
         ".mensaje{border-radius: 20px;background-color: #dff0ff;padding: 10px;margin-left: 10px;}"+
+        ".anuncio{border-radius: 20px;background-color: #FFFFFF;padding-left:10px; margin-left: 10px; color:#97979E; font-weight:600;}"+
+        ".nombreAnuncio{padding-left: 60px; color: #CD0000; font-weight:700; margin-bottom: 0px;}"+
         ".flex{display: flex;flex-direction: row;align-items: center;justify-content: left;}" +
         "</style></head>";
 
@@ -34,16 +36,20 @@ class Recibe extends Thread {
                 socket.receive(p);
                 String mensaje_recibido = new String(p.getData(), 0, p.getLength());
                 if(mensaje_recibido.contains("se ha unido al chat")){//Es un anuncio de ingreso
-                    
+                    mensaje_medio = "<div class='msj'><p class='nombreAnuncio'>Anuncio</p><div class='flex'>"+
+                    "<img src='https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/ChatFX/img/altavoz.png' alt='usuario' class='avatar'>"+
+                    "<div class='anuncio'> " + mensaje_recibido + "</div>"+
+                    "</div></div>";
                 }else{//Es un mensaje normal
                     mensaje_medio = mensaje_recibido;  
-                    mensaje = mensaje+mensaje_medio;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run(){
-                            webEngine.loadContent(mensaje);
-                        }});
                 }
+                mensaje = mensaje+mensaje_medio;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run(){
+                        webEngine.loadContent(mensaje);
+                    }}
+                );
              }
         }catch (Exception e) {
             System.out.println("Erro en hilo recibir");
