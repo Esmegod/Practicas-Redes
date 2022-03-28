@@ -1,6 +1,5 @@
 package chat;
 
-import static chat.Main.webEngine;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,20 +16,36 @@ public class Chat extends JFrame implements KeyListener{
 
     WebView webview;
     JFXPanel fxPanel;
-    String usuario = "Esme";
-    String imagen = "mapache";
+    String usuario = "";
+    String imagen  = "";
     MulticastSocket m;
     JTextArea mensajeField;
+    String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/gato.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/mapache.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/perro.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png"};
 
-    public Chat(MulticastSocket m){
+    public int aleatorio(){
+        int x = (int)(Math.random()*5);
+        return x;
+    }
+
+    public Chat(){
+        //Pestaña de usuarios
+        usuario = JOptionPane.showInputDialog(null,"Ingrese su usuario");
+        imagen = iconosUsuarios[aleatorio()];
         //Se obtiene el socket
-        this.m = m;
+        Socket multicastSocket = new Socket();
+        this.m = multicastSocket.conectarse(usuario);
         
         //Se personaliza la venyana
         setBounds(20, 20, 800, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
+        setTitle("Chat de " + usuario);
         
         //Colores constantes
         Color gris = new Color(247,247,252);
@@ -139,7 +154,6 @@ public class Chat extends JFrame implements KeyListener{
             try{
                 InetAddress grupo = InetAddress.getByName("230.1.1.1");
                 msj = mensajeField.getText();
-                imagen = "D:\\Fer_Mtz\\Desktop\\3CM2\\Aplicaciones Red\\Practicas-Redes\\Practica3\\Multicast\\img\\mapache.png";
                 String div = "<div class='msj'><p class='nombre'>" + usuario + "</p><div class='flex'>"+
                 "<img src='" + imagen + "' alt='usuario' class='avatar'>"+
                 "<div class='mensaje'>" + msj + "</div>"+
@@ -147,6 +161,7 @@ public class Chat extends JFrame implements KeyListener{
                 byte [] b = div.getBytes();
                 DatagramPacket p = new DatagramPacket(b, b.length, grupo, 4000);
                 m.send(p);
+                mensajeField.setText("");
             }catch(Exception ex){
                 ex.printStackTrace();
             }   

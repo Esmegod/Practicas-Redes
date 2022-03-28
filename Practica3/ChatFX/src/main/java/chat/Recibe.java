@@ -1,5 +1,6 @@
 package chat;
 
+
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
 import javafx.application.Platform;
@@ -31,14 +32,18 @@ class Recibe extends Thread {
             for (;;) {
                 DatagramPacket p = new DatagramPacket(new byte[65535], 65535);
                 socket.receive(p);
-                mensaje_medio =  new String(p.getData(), 0, p.getLength());
-                mensaje = mensaje+mensaje_medio;
-                
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run(){
-                        webEngine.loadContent(mensaje);
-                    }});
+                String mensaje_recibido = new String(p.getData(), 0, p.getLength());
+                if(mensaje_recibido.contains("se ha unido al chat")){//Es un anuncio de ingreso
+                    
+                }else{//Es un mensaje normal
+                    mensaje_medio = mensaje_recibido;  
+                    mensaje = mensaje+mensaje_medio;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run(){
+                            webEngine.loadContent(mensaje);
+                        }});
+                }
              }
         }catch (Exception e) {
             System.out.println("Erro en hilo recibir");

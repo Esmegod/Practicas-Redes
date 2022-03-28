@@ -1,11 +1,13 @@
 package chat;
 
+import java.io.ByteArrayOutputStream;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class Socket {
     
-     public MulticastSocket conectarse(){
+     public MulticastSocket conectarse(String usuario){
         int puerto = 4000;
         MulticastSocket m = null;
         InetAddress ip = null;
@@ -15,6 +17,11 @@ public class Socket {
             m.setReuseAddress(true);
             m.setTimeToLive(255);
             m.joinGroup(ip);
+            
+            String anuncio = usuario + "se ha unido al chat";
+            byte [] b = anuncio.getBytes();
+            DatagramPacket p = new DatagramPacket(b, b.length);
+            m.send(p);
         }catch(Exception e){
             e.printStackTrace();
         }
