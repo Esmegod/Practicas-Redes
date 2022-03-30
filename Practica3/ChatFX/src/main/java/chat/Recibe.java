@@ -20,16 +20,7 @@ public class Recibe extends Thread {
     WebEngine webEngine;
     WebEngine webEngineUsuarios;
     String usuario;
-    String mensaje = "<head><style>"+
-        "*{font-family: Arial, Helvetica, sans-serif;}"+
-        ".nombre{padding-left: 55px;color:  #b0b0b8;margin-bottom: 5px;}"+
-        ".avatar{height: 30px;width: 30px;padding: 5px;border-radius: 100%;}"+
-        ".mensaje{border-radius: 20px;background-color: #dff0ff;padding: 10px;margin-left: 10px;}"+
-        ".anuncio{border-radius: 20px;background-color: #FFFFFF;padding-left:10px; margin-left: 10px; color:#97979E; font-weight:600;}"+
-        ".nombreAnuncio{padding-left: 60px; color: #CD0000; font-weight:700; margin-bottom: 0px;}"+
-        ".flex{display: flex;flex-direction: row;align-items: center;justify-content: left;}" +
-        //"audio::-webkit-media-controls-panel{background-color: #dff0ff;}"+
-        "</style></head>"; 
+    String mensaje = ""; 
     String mensajeUsuarios = "";
     ArrayList<String> usuariosConectados = new ArrayList<>();
     String encabezadoConectados  ="<head><style>"+
@@ -45,6 +36,19 @@ public class Recibe extends Thread {
         this.webEngine = webEngine;
         this.webEngineUsuarios = webEngineUsuarios;
         this.usuario = usuario;
+        File f = new File("");
+        String ruta = f.getAbsolutePath();
+        System.out.println(ruta);
+        this.mensaje = "<head><base href=\"file:"+ruta+"\\\"><style>"+
+        "*{font-family: Arial, Helvetica, sans-serif;}"+
+        ".nombre{padding-left: 55px;color:  #b0b0b8;margin-bottom: 5px;}"+
+        ".avatar{height: 30px;width: 30px;padding: 5px;border-radius: 100%;}"+
+        ".mensaje{border-radius: 20px;background-color: #dff0ff;padding: 10px;margin-left: 10px;}"+
+        ".anuncio{border-radius: 20px;background-color: #FFFFFF;padding-left:10px; margin-left: 10px; color:#97979E; font-weight:600;}"+
+        ".nombreAnuncio{padding-left: 60px; color: #CD0000; font-weight:700; margin-bottom: 0px;}"+
+        ".flex{display: flex;flex-direction: row;align-items: center;justify-content: left;}" +
+        "audio::-webkit-media-controls-panel{background-color: #dff0ff;}"+
+        "</style></head>";
     }
 
     public void run() {
@@ -120,10 +124,10 @@ public class Recibe extends Thread {
                             @Override
                             public void run(){
                                 //String pruebaImage = "<img src='file:D:\\Fer_Mtz\\Desktop\\mapache.png' alt='imagen'/>";
-                                String url  = "file:" + new File("img/mapache.png").getAbsolutePath();
-                                String pruebaImage = "<img src='"+url+"' alt='imagen'/>";
-                                
-                                webEngine.loadContent(mensaje+pruebaImage);
+                                //String url  = "file:" + new File("img/mapache.png").getAbsolutePath();
+                                String pruebaImage = "<img src='tempChat\\mapache.png' alt='imagen'/>";
+                                String pruebaAudio = "<br><audio controls><source src='tempChat\\Magic.mp3' type=\"audio/mp3\">Not Supported</audio>";
+                                webEngine.loadContent(mensaje+pruebaImage+pruebaAudio);
                                 for(int i =0; i<usuariosConectados.size(); i++){
                                     mensajeMedioConectados += "<div class='conectado flex'><div class='punto'></div>"+
                                         "<div class='nombreConectado'>"+usuariosConectados.get(i)+"</div></div>";
