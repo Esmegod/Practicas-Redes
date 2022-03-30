@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import javafx.application.Platform;
@@ -41,7 +40,7 @@ public class Chat extends JFrame implements KeyListener{
         usuario = JOptionPane.showInputDialog(null,"Ingrese su usuario");
         imagen = iconosUsuarios[aleatorio()];
         //Se obtiene el socket
-        Socket multicastSocket = new Socket();
+        SocketChat multicastSocket = new SocketChat();
         this.m = multicastSocket.conectarse(usuario);
         
         //Se personaliza la venyana
@@ -157,7 +156,7 @@ public class Chat extends JFrame implements KeyListener{
         webview = new WebView();
         root.getChildren().add(webview);
         fxPanel.setScene(scene);
-        
+
         StackPane root2 = new StackPane();
         Scene scene2 = new Scene(root2);
         webview2 = new WebView();

@@ -47,7 +47,10 @@
             margin: 10px;
         }
 
-        
+        audio::-webkit-media-controls-panel{
+            background-color: #dff0ff;
+        }
+
     </style>
 </head>
 <body>
@@ -91,4 +94,15 @@
         <div class="nombreConectado">Fer</div>
     </div>
 
+    <img src="mapache.png" alt="mapache">
 
+    <audio controls>
+        <source src='Magic.mp3' type="audio/mp3">
+      Your browser does not support the audio element.
+      </audio>
+
+
+    <div id='prueba'></div>
+    <script>
+        document.getElementById('prueba').innerHTML = window.location.pathname;
+    </script>

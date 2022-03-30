@@ -1,8 +1,8 @@
 package chat;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
@@ -14,12 +14,12 @@ import javafx.application.Platform;
 import javafx.scene.web.WebEngine;
 import javax.swing.JEditorPane;
 
-class Recibe extends Thread {
+public class Recibe extends Thread {
     MulticastSocket socket;
     JEditorPane editorPane;
     WebEngine webEngine;
     WebEngine webEngineUsuarios;
-    String usuario; 
+    String usuario;
     String mensaje = "<head><style>"+
         "*{font-family: Arial, Helvetica, sans-serif;}"+
         ".nombre{padding-left: 55px;color:  #b0b0b8;margin-bottom: 5px;}"+
@@ -28,6 +28,7 @@ class Recibe extends Thread {
         ".anuncio{border-radius: 20px;background-color: #FFFFFF;padding-left:10px; margin-left: 10px; color:#97979E; font-weight:600;}"+
         ".nombreAnuncio{padding-left: 60px; color: #CD0000; font-weight:700; margin-bottom: 0px;}"+
         ".flex{display: flex;flex-direction: row;align-items: center;justify-content: left;}" +
+        //"audio::-webkit-media-controls-panel{background-color: #dff0ff;}"+
         "</style></head>"; 
     String mensajeUsuarios = "";
     ArrayList<String> usuariosConectados = new ArrayList<>();
@@ -118,7 +119,11 @@ class Recibe extends Thread {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run(){
-                                webEngine.loadContent(mensaje);
+                                //String pruebaImage = "<img src='file:D:\\Fer_Mtz\\Desktop\\mapache.png' alt='imagen'/>";
+                                String url  = "file:" + new File("img/mapache.png").getAbsolutePath();
+                                String pruebaImage = "<img src='"+url+"' alt='imagen'/>";
+                                
+                                webEngine.loadContent(mensaje+pruebaImage);
                                 for(int i =0; i<usuariosConectados.size(); i++){
                                     mensajeMedioConectados += "<div class='conectado flex'><div class='punto'></div>"+
                                         "<div class='nombreConectado'>"+usuariosConectados.get(i)+"</div></div>";

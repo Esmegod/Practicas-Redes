@@ -1,12 +1,8 @@
 package chat;
 
-import java.net.MulticastSocket;
-import javafx.scene.web.WebEngine;
 import javax.swing.SwingUtilities;
 
-public class Main {
-    static WebEngine webEngine = null;
-    
+public class Main {    
     public static void main(String[] args) throws InterruptedException {
        
         SwingUtilities.invokeLater(new Runnable() {
