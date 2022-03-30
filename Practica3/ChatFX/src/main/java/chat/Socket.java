@@ -2,6 +2,7 @@ package chat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -20,7 +21,7 @@ public class Socket {
             m.joinGroup(ip);
             
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream dos = new DataOutputStream(baos);
+            ObjectOutputStream dos = new ObjectOutputStream(baos);
             
             String usuarios = "Todos";
             int tipo = 2;
@@ -31,6 +32,7 @@ public class Socket {
             dos.writeUTF(usuarios);
             dos.writeInt(tipo);
             dos.writeUTF(anuncio);
+            dos.writeUTF(usuario);
             dos.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, ip, 4000);
             m.send(p);

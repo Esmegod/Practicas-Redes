@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -178,7 +179,7 @@ public class Chat extends JFrame implements KeyListener{
                 "<div class='mensaje'>" + msj + "</div>"+
                 "</div></div>";
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(baos);
+                ObjectOutputStream dos = new ObjectOutputStream(baos);
                 dos.writeUTF(combo);
                 dos.writeInt(1);
                 dos.writeUTF(div);
