@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.net.*;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -14,12 +16,13 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
 public class Chat extends JFrame implements KeyListener{
 
-    WebView webview;
-    JFXPanel fxPanel;
+    WebView webview, webview2;
+    JFXPanel fxPanel, fxPanelUsuarios;
     String usuario = "";
     String imagen  = "";
     MulticastSocket m;
     JTextArea mensajeField;
+    JComboBox<String> usuariosPrivados;
     String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/gato.png",
@@ -55,11 +58,17 @@ public class Chat extends JFrame implements KeyListener{
         //Gris fuerte: 176, 176, 184
         
         //Creación de paneles 
-        JPanel areaUsuarios = new JPanel();
+        fxPanelUsuarios = new JFXPanel();
+        fxPanelUsuarios.setBackground(Color.white);
+        fxPanelUsuarios.setBounds(550, 0, 250, 300);
+        fxPanelUsuarios.setBorder(BorderFactory.createMatteBorder(0,0,2,0,gris));
+        add(fxPanelUsuarios);
+
+        /*JPanel areaUsuarios = new JPanel();
         areaUsuarios.setBounds(550, 0, 250, 300);
         areaUsuarios.setBorder(BorderFactory.createMatteBorder(0,0,2,0,gris));
         areaUsuarios.setBackground(Color.white);
-        add(areaUsuarios);
+        add(areaUsuarios);*/
         
         JPanel areaMensajes = new JPanel();
         areaMensajes.setBounds(0, 300, 800, 200);
@@ -83,15 +92,13 @@ public class Chat extends JFrame implements KeyListener{
         comboLabel.setBounds(10, 8, 100, 30);
         areaMensajes.add(comboLabel);
         
-        JComboBox<String> usuariosPrivados = new JComboBox<>();
+        usuariosPrivados = new JComboBox<>();
         usuariosPrivados.setBounds(80, 8, 100, 30);
         areaMensajes.add(usuariosPrivados);
         usuariosPrivados.setOpaque(true);
         usuariosPrivados.setBackground(gris);
         usuariosPrivados.addItem("Todos");
-        usuariosPrivados.addItem("Esme");
-        usuariosPrivados.addItem("Fer"); 
-
+  
         JButton emojiButton = new JButton();
         ImageIcon emojiIcon = new ImageIcon("img/smile.png");
         emojiButton.setIcon(new ImageIcon(emojiIcon.getImage().getScaledInstance(25,25,Image.SCALE_SMOOTH)));
@@ -132,19 +139,29 @@ public class Chat extends JFrame implements KeyListener{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-               initFX(fxPanel);
-               Recibe r = new Recibe(m, webview.getEngine());
+                initFX(fxPanel, fxPanelUsuarios);
+                //Enviar m, combobox, webview 
+                Recibe r = new Recibe(m, webview.getEngine(),webview2.getEngine(), usuario);
                 r.start();
+                //Se crea un objeto de la clase EnvioNombre 
+
+                
             }
         });
     }
     
-    public void initFX(JFXPanel fxPanel){
+    public void initFX(JFXPanel fxPanel, JFXPanel fxPanelUsuarios){
         StackPane root = new StackPane();
         Scene scene = new Scene(root);
         webview = new WebView();
         root.getChildren().add(webview);
         fxPanel.setScene(scene);
+        
+        StackPane root2 = new StackPane();
+        Scene scene2 = new Scene(root2);
+        webview2 = new WebView();
+        root2.getChildren().add(webview2);
+        fxPanelUsuarios.setScene(scene2);
     }
     
     @Override
@@ -154,14 +171,23 @@ public class Chat extends JFrame implements KeyListener{
             try{
                 InetAddress grupo = InetAddress.getByName("230.1.1.1");
                 msj = mensajeField.getText();
-                String div = "<div class='msj'><p class='nombre'>" + usuario + "</p><div class='flex'>"+
+                String combo = (String) usuariosPrivados.getSelectedItem();
+                String extraPrivado = combo.equals("Todos")?"":" te ha enviado un mensaje";
+                String div = "<div class='msj'><p class='nombre'>" + usuario +  extraPrivado + "</p><div class='flex'>"+
                 "<img src='" + imagen + "' alt='usuario' class='avatar'>"+
                 "<div class='mensaje'>" + msj + "</div>"+
                 "</div></div>";
-                byte [] b = div.getBytes();
-                DatagramPacket p = new DatagramPacket(b, b.length, grupo, 4000);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                DataOutputStream dos = new DataOutputStream(baos);
+                dos.writeUTF(combo);
+                dos.writeInt(1);
+                dos.writeUTF(div);
+                dos.flush();
+                DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, grupo, 4000);
                 m.send(p);
                 mensajeField.setText("");
+                dos.close();
+                baos.close();
             }catch(Exception ex){
                 ex.printStackTrace();
             }   
