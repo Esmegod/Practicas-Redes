@@ -23,12 +23,13 @@ public class Chat extends JFrame implements KeyListener{
     MulticastSocket m;
     JTextArea mensajeField;
     JComboBox<String> usuariosPrivados;
-    String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png",
+    
+    String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/gato.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/mapache.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/perro.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png"};
+                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png"};
 
     public int aleatorio(){
         int x = (int)(Math.random()*5);
@@ -141,7 +142,7 @@ public class Chat extends JFrame implements KeyListener{
             public void run() {
                 initFX(fxPanel, fxPanelUsuarios);
                 //Enviar m, combobox, webview 
-                Recibe r = new Recibe(m, webview.getEngine(),webview2.getEngine(), usuario);
+                Recibe r = new Recibe(m, webview.getEngine(),webview2.getEngine(), usuario, usuariosPrivados);
                 r.start();
                 //Se crea un objeto de la clase EnvioNombre 
 
@@ -171,17 +172,24 @@ public class Chat extends JFrame implements KeyListener{
             try{
                 InetAddress grupo = InetAddress.getByName("230.1.1.1");
                 msj = mensajeField.getText();
-                String combo = (String) usuariosPrivados.getSelectedItem();
-                String extraPrivado = combo.equals("Todos")?"":" te ha enviado un mensaje";
-                String div = "<div class='msj'><p class='nombre'>" + usuario +  extraPrivado + "</p><div class='flex'>"+
+                String destinatario = (String) usuariosPrivados.getSelectedItem();
+                String destinatariosMensaje = "";
+                if(destinatario.equals("Todos")){
+                    destinatariosMensaje = usuario;
+                }else{
+                    destinatariosMensaje = "Mensaje privado entre " + usuario + " y "+ destinatario; 
+                }
+                String mensaje = "<div class='msj'><p class='nombre'>"+destinatariosMensaje+"</p><div class='flex'>"+
                 "<img src='" + imagen + "' alt='usuario' class='avatar'>"+
                 "<div class='mensaje'>" + msj + "</div>"+
                 "</div></div>";
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream dos = new ObjectOutputStream(baos);
-                dos.writeUTF(combo);
+                dos.writeUTF(destinatario);
+                dos.writeUTF(usuario);
                 dos.writeInt(1);
-                dos.writeUTF(div);
+                dos.writeUTF(mensaje);
+                dos.writeObject(null);
                 dos.flush();
                 DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, grupo, 4000);
                 m.send(p);

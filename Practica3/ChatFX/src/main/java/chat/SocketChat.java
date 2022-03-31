@@ -8,7 +8,7 @@ import java.net.MulticastSocket;
 
 public class SocketChat {
     
-     public MulticastSocket conectarse(String usuario){
+     public MulticastSocket conectarse(String remitente){
         int puerto = 4000;
         MulticastSocket m = null;
         InetAddress ip = null;
@@ -22,16 +22,17 @@ public class SocketChat {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream dos = new ObjectOutputStream(baos);
             
-            String usuarios = "Todos";
+            String destinatario = "Todos";
             int tipo = 2;
             String anuncio = "<div class='msj'><p class='nombreAnuncio'>Anuncio</p><div class='flex'>"+
                         "<img src='https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/ChatFX/img/altavoz.png' alt='usuario' class='avatar'>"+
-                        "<div class='anuncio'> " + usuario + " se ha unido al chat</div>"+
+                        "<div class='anuncio'> " + remitente + " se ha unido al chat</div>"+
                         "</div></div>";
-            dos.writeUTF(usuarios);
+            dos.writeUTF(destinatario);
+            dos.writeUTF(remitente);
             dos.writeInt(tipo);
             dos.writeUTF(anuncio);
-            dos.writeUTF(usuario);
+            dos.writeObject(null);
             dos.flush();
             DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, ip, 4000);
             m.send(p);
