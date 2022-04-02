@@ -52,6 +52,8 @@ public class Recibe extends Thread {
         ".anuncio{border-radius: 20px;background-color: #FFFFFF;padding-left:10px; margin-left: 10px; color:#97979E; font-weight:500; font-size: 1rem;}"+
         ".nombreAnuncio{padding-left: 60px; color: #CD0000; font-weight:700; margin-bottom: 0px;}"+
         ".flex{display: flex;flex-direction: row;align-items: center;justify-content: left;}" +
+        ".msj{margin: 10px;}"+
+        ".emoji{padding:0px 5px 0px 5px;}"+
         "audio::-webkit-media-controls-panel{background-color: #dff0ff;}"+
         "</style></head>";
         this.combobox = combobox;

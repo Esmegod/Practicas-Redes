@@ -1,6 +1,8 @@
 package chat;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
-public class Chat extends JFrame implements KeyListener{
+public class Chat extends JFrame implements KeyListener, ActionListener{
 
     WebView webview, webview2;
     JFXPanel fxPanel, fxPanelUsuarios;
@@ -25,6 +27,10 @@ public class Chat extends JFrame implements KeyListener{
     JComboBox<String> usuariosPrivados;
     String encabezadoMsj = "";
     String textoPane = "";
+    JDialog modalEmojis;
+    JButton emojiButton;
+    JButton imagenButton;
+    JButton microButton;
     
     String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
@@ -48,8 +54,7 @@ public class Chat extends JFrame implements KeyListener{
         //Se obtiene la ruta
         File f = new File("");
         String ruta = f.getAbsolutePath();
-        encabezadoMsj = "<base href=\"file:"+ruta+"\\\">";
-        //"<style>img{height:5px;width:5px;padding:2px; background-color:red;}</style></head>";
+        encabezadoMsj = "<base href=\"file:"+ruta+"\\\"><style>p{display:inline}</style>";
 
         //Se personaliza la venyana
         setBounds(20, 20, 800, 500);
@@ -71,12 +76,6 @@ public class Chat extends JFrame implements KeyListener{
         fxPanelUsuarios.setBounds(550, 0, 250, 300);
         fxPanelUsuarios.setBorder(BorderFactory.createMatteBorder(0,0,2,0,gris));
         add(fxPanelUsuarios);
-
-        /*JPanel areaUsuarios = new JPanel();
-        areaUsuarios.setBounds(550, 0, 250, 300);
-        areaUsuarios.setBorder(BorderFactory.createMatteBorder(0,0,2,0,gris));
-        areaUsuarios.setBackground(Color.white);
-        add(areaUsuarios);*/
         
         JPanel areaMensajes = new JPanel();
         areaMensajes.setBounds(0, 300, 800, 200);
@@ -107,31 +106,34 @@ public class Chat extends JFrame implements KeyListener{
         usuariosPrivados.setBackground(gris);
         usuariosPrivados.addItem("Todos");
   
-        JButton emojiButton = new JButton();
+        emojiButton = new JButton();
         ImageIcon emojiIcon = new ImageIcon("img/smile.png");
         emojiButton.setIcon(new ImageIcon(emojiIcon.getImage().getScaledInstance(25,25,Image.SCALE_SMOOTH)));
         emojiButton.setOpaque(true);
         emojiButton.setBorderPainted(false);
         emojiButton.setBackground(Color.white);
         emojiButton.setBounds(640, 8, 30, 30);
+        emojiButton.addActionListener(this);
         areaMensajes.add(emojiButton);
         
-        JButton imagenButton = new JButton();
+        imagenButton = new JButton();
         ImageIcon imagenIcon = new ImageIcon("img/gallery.png");
         imagenButton.setIcon(new ImageIcon(imagenIcon.getImage().getScaledInstance(20,20,Image.SCALE_SMOOTH)));
         imagenButton.setOpaque(true);
         imagenButton.setBorderPainted(false);
         imagenButton.setBackground(Color.white);
         imagenButton.setBounds(680, 8, 30, 30);
+        imagenButton.addActionListener(this);
         areaMensajes.add(imagenButton);
         
-        JButton microButton = new JButton();
+        microButton = new JButton();
         ImageIcon microIcon = new ImageIcon("img/microphone.png");
         microButton.setIcon(new ImageIcon(microIcon.getImage().getScaledInstance(20,20,Image.SCALE_SMOOTH)));
         microButton.setOpaque(true);
         microButton.setBorderPainted(false);
         microButton.setBackground(Color.white);
         microButton.setBounds(720, 8, 30, 30);
+        microButton.addActionListener(this);
         areaMensajes.add(microButton);
         
         mensajeField = new JTextPane();
@@ -141,6 +143,25 @@ public class Chat extends JFrame implements KeyListener{
         mensajeField.addKeyListener(this);
         //mensajeField.setText("<img src='file:D:\\Fer_Mtz\\Desktop\\3CM2\\Aplicaciones Red\\Practicas-Redes\\Practica3\\ChatFX\\emojis\\poo.png' />");
         areaMensajes.add(mensajeField);
+
+        modalEmojis = new JDialog();
+        modalEmojis.setSize(200,300);
+        modalEmojis.setLayout(new GridLayout(6,5));
+        JButton[] emojis = new JButton[30];
+        String[] emojisNombres = {"amazed", "amused", "angel", "anger", "angry", "cold",
+        "confused", "cool", "cry", "crying", "exploding", "flushed", "ghost", "greed",
+        "happy", "in-love","laughing","love","mute","neutral","poo","puke","rolling","sad",
+        "sleeping","smile","surprised","tongue","upside-down","zany"};        
+        for(int i=0; i<30; i++){
+            ImageIcon iconoEmoji = new ImageIcon("emojis/"+emojisNombres[i]+".png");
+            emojis[i] = new JButton();
+            emojis[i].setBackground(Color.white);
+            emojis[i].setBorderPainted(false);
+            emojis[i].setIcon(iconoEmoji);
+            emojis[i].setName(emojisNombres[i]);
+            emojis[i].addActionListener(this);
+            modalEmojis.add(emojis[i]);
+        }
         
         setResizable(false);
         setVisible(true);
@@ -153,9 +174,6 @@ public class Chat extends JFrame implements KeyListener{
                 //Enviar m, combobox, webview 
                 Recibe r = new Recibe(m, webview.getEngine(),webview2.getEngine(), usuario, usuariosPrivados);
                 r.start();
-                //Se crea un objeto de la clase EnvioNombre 
-
-                
             }
         });
     }
@@ -175,12 +193,21 @@ public class Chat extends JFrame implements KeyListener{
     }
    
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e) {}
+
+    
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+    
+    @Override
+    public void keyReleased(KeyEvent e) {
         String msj = "";
         if(e.getKeyCode() == KeyEvent.VK_ENTER){
             try{
                 InetAddress grupo = InetAddress.getByName("230.1.1.1");
-                msj = mensajeField.getText();
+                msj = mensajeField.getText().replace("<html>", "").replace("<head>", "").replace("<body>", "").replace("</html>", "").replace("</head>", "").replace("</body>", "").replace("<p style=\"margin-top: 0\">", "").replace("</p>", "").trim();
                 String destinatario = (String) usuariosPrivados.getSelectedItem();
                 String destinatariosMensaje = "";
                 if(destinatario.equals("Todos")){
@@ -190,7 +217,7 @@ public class Chat extends JFrame implements KeyListener{
                 }
                 String mensaje = "<div class='msj'><p class='nombre'>"+destinatariosMensaje+"</p><div class='flex'>"+
                 "<img src='" + imagen + "' alt='usuario' class='avatar'>"+
-                "<div class='mensaje'>" + msj + "</div>"+
+                "<div class='mensaje flex'>" + msj + "</div>"+
                 "</div></div>";
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream dos = new ObjectOutputStream(baos);
@@ -203,6 +230,7 @@ public class Chat extends JFrame implements KeyListener{
                 DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length, grupo, 4000);
                 m.send(p);
                 mensajeField.setText("");
+                modalEmojis.dispose();
                 dos.close();
                 baos.close();
             }catch(Exception ex){
@@ -210,16 +238,22 @@ public class Chat extends JFrame implements KeyListener{
             }   
         }
     }
-    
+
     @Override
-    public void keyTyped(KeyEvent e) {}
-    
-    @Override
-    public void keyReleased(KeyEvent e) {
-        String emoji = "poo";
-        if(mensajeField.getText().contains(":"+emoji+":")){
-            textoPane = mensajeField.getText().replace(":smile:", "<img src='emojis\\"+emoji+".png' />");
+    public void actionPerformed(ActionEvent e) {
+        if((JButton)e.getSource() == emojiButton){
+            modalEmojis.setLocationRelativeTo(emojiButton);;
+            modalEmojis.setVisible(true);
+        }else if((JButton)e.getSource() == imagenButton){
+            System.out.println("Imagen");
+        }else if((JButton)e.getSource() == microButton){
+            System.out.println("Micro");
+        }else{
+            // "<img src='emojis\\"+emoji+".png' />"
+            String emoji = ((JButton)e.getSource()).getName();
+            textoPane = mensajeField.getText().replace("</p>","<img class='emoji' src='emojis\\"+emoji+".png' /></p>");
             mensajeField.setText(encabezadoMsj + textoPane);
-        }
+        }   
+        
     }
 }
