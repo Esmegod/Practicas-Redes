@@ -1,5 +1,8 @@
 package chat;
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +23,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
 
     WebView webview, webview2;
     JFXPanel fxPanel, fxPanelUsuarios;
-    String usuario = "";
+    String usuario = null;
     String imagen  = "";
     MulticastSocket m;
     JTextPane mensajeField;
@@ -32,29 +35,44 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
     JButton imagenButton;
     JButton microButton;
     
-    String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/gato.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/mapache.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/perro.png",
-                "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png"};
+    // String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
+    //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
+    //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/gato.png",
+    //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/mapache.png",
+    //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/perro.png",
+    //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/cocodrilo.png"};
+
+    String [] iconosUsuarios = {"img\\vaca.png",
+                                "img\\arana.png",
+                                "img\\gato.png",
+                                "img\\mapache.png",
+                                "img\\perro.png",
+                                "img\\cocodrilo.png"};
 
     public int aleatorio(){
-        int x = (int)(Math.random()*5);
+        int x = (int)(Math.random()*6);
         return x;
     }
 
     public Chat(){
         //Pestaña de usuarios
-        usuario = JOptionPane.showInputDialog(null,"Ingrese su usuario");
         imagen = iconosUsuarios[aleatorio()];
+        ImageIcon icon = new ImageIcon(imagen);
+        //usuario = JOptionPane.showInputDialog(null,"Ingrese su usuario", "Chat", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,icon, null, 0);
+        Object optionPane = JOptionPane.showInputDialog(null, "Ingrese su usuario","Bienvenido al chat",JOptionPane.OK_CANCEL_OPTION, icon, null, null);
+        if(optionPane == null){
+            System.exit(0);
+        }else{
+            usuario = optionPane.toString();
+        }
+        
         //Se obtiene el socket
         SocketChat multicastSocket = new SocketChat();
         this.m = multicastSocket.conectarse(usuario);
         //Se obtiene la ruta
         File f = new File("");
         String ruta = f.getAbsolutePath();
-        encabezadoMsj = "<base href=\"file:"+ruta+"\\\"><style>p{display:inline}</style>";
+        encabezadoMsj = "<base href=\"file:"+ruta+"\\\">";
 
         //Se personaliza la venyana
         setBounds(20, 20, 800, 500);
@@ -86,13 +104,9 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         //Se configura el area Chat con scroll y webView
         fxPanel = new JFXPanel();
         fxPanel.setBackground(Color.white);
-        
-        JScrollPane scroll = new JScrollPane();
-        scroll.setBorder(BorderFactory.createMatteBorder(0,0,2,2,gris));
-        scroll.setViewportView(fxPanel);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setBounds(0,0,550,300);
-        getContentPane().add(scroll);
+        fxPanel.setBorder(BorderFactory.createMatteBorder(0,0,2,2,gris));
+        fxPanel.setBounds(0,0,550,300);
+        add(fxPanel);
       
         //Elementos de Area Mensaje
         JLabel comboLabel = new JLabel("Enviar a:");
@@ -141,7 +155,8 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         mensajeField.setBorder(BorderFactory.createMatteBorder(1,1,1,1,gris));
         mensajeField.setBounds(10,50, 765, 100);
         mensajeField.addKeyListener(this);
-        //mensajeField.setText("<img src='file:D:\\Fer_Mtz\\Desktop\\3CM2\\Aplicaciones Red\\Practicas-Redes\\Practica3\\ChatFX\\emojis\\poo.png' />");
+        mensajeField.setFont(new Font("Arial", Font.PLAIN, 15));
+        mensajeField.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         areaMensajes.add(mensajeField);
 
         modalEmojis = new JDialog();
@@ -174,6 +189,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
                 //Enviar m, combobox, webview 
                 Recibe r = new Recibe(m, webview.getEngine(),webview2.getEngine(), usuario, usuariosPrivados);
                 r.start();
+                mensajeField.grabFocus();
             }
         });
     }
@@ -182,6 +198,8 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         StackPane root = new StackPane();
         Scene scene = new Scene(root);
         webview = new WebView();
+        webview.setPrefHeight(300);
+        webview.setPrefWidth(550);
         root.getChildren().add(webview);
         fxPanel.setScene(scene);
 
@@ -193,13 +211,15 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
     }
    
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+         if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            e.consume();
+        }
+    }
 
     
     @Override
-    public void keyTyped(KeyEvent e) {
-        
-    }
+    public void keyTyped(KeyEvent e) {}
     
     @Override
     public void keyReleased(KeyEvent e) {
@@ -251,7 +271,8 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         }else{
             // "<img src='emojis\\"+emoji+".png' />"
             String emoji = ((JButton)e.getSource()).getName();
-            textoPane = mensajeField.getText().replace("</p>","<img class='emoji' src='emojis\\"+emoji+".png' /></p>");
+            String msjAux = mensajeField.getText().replace("<html>", "").replace("<head>", "").replace("<body>", "").replace("</html>", "").replace("</head>", "").replace("</body>", "").trim(); //Para quitar las etiquetas innecesarias anidadas
+            textoPane = msjAux.replace("</p>","<img class='emoji' src='emojis\\"+emoji+".png' /></p>");
             mensajeField.setText(encabezadoMsj + textoPane);
         }   
         

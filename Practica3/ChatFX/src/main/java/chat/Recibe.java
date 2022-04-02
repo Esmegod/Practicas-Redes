@@ -44,7 +44,7 @@ public class Recibe extends Thread {
         String ruta = f.getAbsolutePath();
         System.out.println(ruta);
         this.mensaje = "<head><base href=\"file:"+ruta+"\\\"><style>"+
-        "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');"+
+       "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');"+
         "*{font-family: 'Roboto', Arial, Helvetica, sans-serif;}"+
         ".nombre{padding-left: 55px;color:  #b0b0b8;margin-bottom: 5px;}"+
         ".avatar{height: 30px;width: 30px;padding: 5px;border-radius: 100%;}"+
@@ -55,7 +55,9 @@ public class Recibe extends Thread {
         ".msj{margin: 10px;}"+
         ".emoji{padding:0px 5px 0px 5px;}"+
         "audio::-webkit-media-controls-panel{background-color: #dff0ff;}"+
-        "</style></head>";
+        "</style>"+
+        "<script>function toBottom(){window.scrollTo(0, document.body.scrollHeight);}</script>"
+        +"</head><body onload='toBottom()'>";
         this.combobox = combobox;
     }
 
@@ -115,7 +117,7 @@ public class Recibe extends Thread {
                             public void run(){
                                 webEngine.loadContent(mensaje);
                             }}
-                        );  
+                        );    
                     }else if(tipoMensaje == 2){//Anuncio para el chat
                         mensaje += mensaje_recibido;
                         usuariosConectados.add(remitente);
