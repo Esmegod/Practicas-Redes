@@ -1,5 +1,4 @@
 package chat;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -164,7 +163,7 @@ public class Chat extends JFrame implements KeyListener{
         root2.getChildren().add(webview2);
         fxPanelUsuarios.setScene(scene2);
     }
-    
+   
     @Override
     public void keyPressed(KeyEvent e) {
         String msj = "";
