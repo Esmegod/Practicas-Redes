@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import javafx.application.Platform;
@@ -20,8 +21,10 @@ public class Chat extends JFrame implements KeyListener{
     String usuario = "";
     String imagen  = "";
     MulticastSocket m;
-    JTextArea mensajeField;
+    JTextPane mensajeField;
     JComboBox<String> usuariosPrivados;
+    String encabezadoMsj = "";
+    String textoPane = "";
     
     String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
                 "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
@@ -42,7 +45,12 @@ public class Chat extends JFrame implements KeyListener{
         //Se obtiene el socket
         SocketChat multicastSocket = new SocketChat();
         this.m = multicastSocket.conectarse(usuario);
-        
+        //Se obtiene la ruta
+        File f = new File("");
+        String ruta = f.getAbsolutePath();
+        encabezadoMsj = "<base href=\"file:"+ruta+"\\\">";
+        //"<style>img{height:5px;width:5px;padding:2px; background-color:red;}</style></head>";
+
         //Se personaliza la venyana
         setBounds(20, 20, 800, 500);
         setLocationRelativeTo(null);
@@ -126,10 +134,12 @@ public class Chat extends JFrame implements KeyListener{
         microButton.setBounds(720, 8, 30, 30);
         areaMensajes.add(microButton);
         
-        mensajeField = new JTextArea();
+        mensajeField = new JTextPane();
+        mensajeField.setContentType("text/html");
         mensajeField.setBorder(BorderFactory.createMatteBorder(1,1,1,1,gris));
         mensajeField.setBounds(10,50, 765, 100);
         mensajeField.addKeyListener(this);
+        //mensajeField.setText("<img src='file:D:\\Fer_Mtz\\Desktop\\3CM2\\Aplicaciones Red\\Practicas-Redes\\Practica3\\ChatFX\\emojis\\poo.png' />");
         areaMensajes.add(mensajeField);
         
         setResizable(false);
@@ -200,10 +210,16 @@ public class Chat extends JFrame implements KeyListener{
             }   
         }
     }
-
+    
     @Override
     public void keyTyped(KeyEvent e) {}
     
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+        String emoji = "poo";
+        if(mensajeField.getText().contains(":"+emoji+":")){
+            textoPane = mensajeField.getText().replace(":smile:", "<img src='emojis\\"+emoji+".png' />");
+            mensajeField.setText(encabezadoMsj + textoPane);
+        }
+    }
 }
