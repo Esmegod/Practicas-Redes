@@ -2,6 +2,7 @@ package chat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
@@ -23,6 +24,7 @@ public class Recibe extends Thread {
     String mensajeUsuarios = "";
     ArrayList<String> usuariosConectados = new ArrayList<>();
     JComboBox<String> combobox;
+    ByteArrayOutputStream audioBytes = new ByteArrayOutputStream();
     
     String encabezadoConectados  ="<head><style>"+
         "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');"+
@@ -73,7 +75,7 @@ public class Recibe extends Thread {
                 int tipoMensaje = dis.readInt();
                 String mensaje_recibido = dis.readUTF();
                 Object obj = dis.readObject();
-
+                
        
                 if(!destinatario.equals("Todos")){ //Es mensaje privado
                     if(tipoMensaje == 1){
@@ -156,8 +158,8 @@ public class Recibe extends Thread {
                                 webEngineUsuarios.loadContent(encabezadoConectados+mensajeMedioConectados);
                                 mensajeMedioConectados ="";
                             }}); 
-                    }else if(tipoMensaje == 3){//Recibe nombre
-                        /*Deprecated*/
+                    }else if(tipoMensaje == 3){//Recibe audiio  
+                        recibeAudio(dis);
                         
                     }else if(tipoMensaje == 4){//Anuncio para decir goodbye :c
 
@@ -169,5 +171,34 @@ public class Recibe extends Thread {
             System.out.println("Error en hilo recibir");
             e.printStackTrace();
         } 
+    }
+
+    public void recibeAudio(ObjectInputStream dis){
+        try{
+            String nombre = dis.readUTF();
+            boolean esExacto = dis.readBoolean();
+            int noPaquete = dis.readInt();
+            int totalPaquetes = dis.readInt();
+            int tamPaquete = dis.readInt();
+            byte[] bMsj = new byte[tamPaquete];
+            dis.read(bMsj);
+           
+            if((!esExacto && noPaquete==totalPaquetes) || (esExacto && noPaquete == totalPaquetes-1) || totalPaquetes==1){
+                audioBytes.write(bMsj);
+                audioBytes.flush();
+                File audioFile = new File("Audios"+usuario+"/"+nombre);
+                FileOutputStream fos = new FileOutputStream(audioFile);
+                fos.write(audioBytes.toByteArray());
+                fos.close();
+                audioBytes.reset();
+            }
+            else{
+                audioBytes.write(bMsj);
+                // audioBytes.flush();
+            }
+
+        }catch(Exception e){
+            System.out.println("Error al recibir paquete");
+        }
     }
 }

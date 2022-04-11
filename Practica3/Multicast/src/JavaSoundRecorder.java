@@ -8,7 +8,7 @@ import java.io.*;
 public class JavaSoundRecorder {
 	// record duration, in milliseconds
 	static final long RECORD_TIME = 5000;	// 5 seconds
-        AudioFormat audioFormat;
+    AudioFormat audioFormat;
         // path of the wav file
 	//File wavFile = new File("E:/Test/RecordAudio.wav");
         File wavFile = new File("Audio.wav");
@@ -18,7 +18,7 @@ public class JavaSoundRecorder {
 
 	// the line from which audio data is captured
 	TargetDataLine line;
-        AudioInputStream ais=null;
+    AudioInputStream ais=null;
 
 	/**
 	 * Defines an audio format

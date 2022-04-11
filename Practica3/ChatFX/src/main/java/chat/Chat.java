@@ -8,10 +8,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.nio.file.Files;
+import java.util.Arrays;
+
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -34,6 +39,9 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
     JButton emojiButton;
     JButton imagenButton;
     JButton microButton;
+    boolean isRecording = false;
+    Audio audio = null;
+    int contadorAudio = 0;
     
     // String [] iconosUsuarios = {"https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/vaca.png",
     //             "https://raw.githubusercontent.com/Esmegod/Practicas-Redes/main/Practica3/Multicast/img/arana.png",
@@ -65,6 +73,8 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         }else{
             usuario = optionPane.toString();
         }
+        File fAudio = new File("Audios"+usuario);
+        fAudio.mkdir();
         
         //Se obtiene el socket
         SocketChat multicastSocket = new SocketChat();
@@ -267,7 +277,29 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         }else if((JButton)e.getSource() == imagenButton){
             System.out.println("Imagen");
         }else if((JButton)e.getSource() == microButton){
-            System.out.println("Micro");
+            if(isRecording){//Se detiene la grabacion
+                isRecording = false;
+                audio.finish();
+                microButton.setBackground(Color.WHITE);
+                //Enviar audio
+                try{
+                    InetAddress grupo = InetAddress.getByName("230.1.1.1");
+                    String destinatario = (String) usuariosPrivados.getSelectedItem();
+                    String nombre = usuario+(contadorAudio-1)+".wav";
+                    File audioFile = new File("Audios"+usuario+"/"+nombre);
+                    byte[] audioBytes = Files.readAllBytes(audioFile.toPath());               
+                    enviarAudio(audioBytes,destinatario, grupo, nombre);
+                }catch(Exception ex){
+                    System.out.println("Error al enviar audio");
+                    ex.printStackTrace();
+                }
+            }else{//Se inicia la grabacion
+                audio = new Audio("Audios"+usuario+"/"+usuario+contadorAudio+".wav");
+                audio.start(); 
+                isRecording = true;
+                microButton.setBackground(Color.RED);
+                contadorAudio++;
+            }
         }else{
             // "<img src='emojis\\"+emoji+".png' />"
             String emoji = ((JButton)e.getSource()).getName();
@@ -276,5 +308,88 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
             mensajeField.setText(encabezadoMsj + textoPane);
         }   
         
+    }
+
+    public void enviarAudio(byte [] audioBytes, String destinatario, InetAddress grupo, String nombre){ 
+        int tam = 65000;
+        boolean esExacto = false;
+        try{
+            if(audioBytes.length>tam){  //se envian muchos paquetes
+                int tp = (int)(audioBytes.length/tam);
+                if(audioBytes.length%tam==0) esExacto=true;
+                for(int i=0; i<tp; i++){
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream dos = new ObjectOutputStream(baos);
+                    byte[] temp = Arrays.copyOfRange(audioBytes, i*tam, (i*tam)+tam);
+                    dos.writeUTF(destinatario);
+                    dos.writeUTF(usuario);
+                    dos.writeInt(3);
+                    dos.writeUTF("");
+                    dos.writeObject(null); 
+                    //Metadatos del audio
+                    dos.writeUTF(nombre);
+                    dos.writeBoolean(esExacto);
+                    dos.writeInt(i);
+                    dos.writeInt(tp);
+                    dos.writeInt(temp.length);
+                    dos.write(temp);
+                    dos.flush();
+                    DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length,grupo, 4000);
+                    m.send(p);
+                    baos.close();
+                    dos.close();
+                }
+                if(audioBytes.length%tam>0){//Se envian los sobrates
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream dos = new ObjectOutputStream(baos);
+                    int sobrantes = audioBytes.length%tam;
+                    byte[] temp = Arrays.copyOfRange(audioBytes, tp*tam, (tp*tam)+sobrantes);
+                    dos.writeUTF(destinatario);
+                    dos.writeUTF(usuario);
+                    dos.writeInt(3);
+                    dos.writeUTF("");
+                    dos.writeObject(null); 
+                    //Metadatos del audio
+                    dos.writeUTF(nombre);
+                    dos.writeBoolean(esExacto);
+                    dos.writeInt(tp);
+                    dos.writeInt(tp);
+                    dos.writeInt(temp.length);
+                    dos.write(temp);
+                    dos.flush();
+                    DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length,grupo, 4000);
+                    m.send(p);
+                    baos.close();
+                    dos.close();
+                }
+            }else{ //Se envia solo un paquete 
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream dos = new ObjectOutputStream(baos);
+
+                dos.writeUTF(destinatario);
+                dos.writeUTF(usuario);
+                dos.writeInt(3);
+                dos.writeUTF("");
+                dos.writeObject(null); 
+                //Metadatos del audio
+                dos.writeUTF(nombre);
+                dos.writeBoolean(true);
+                dos.writeInt(1); 
+                dos.writeInt(1);
+                dos.writeInt(audioBytes.length);
+                dos.write(audioBytes);
+                dos.flush();
+                DatagramPacket p = new DatagramPacket(baos.toByteArray(), baos.toByteArray().length,grupo, 4000);
+                m.send(p);
+                baos.close();
+                dos.close();
+            }
+        }
+        catch(Exception e){
+            System.out.println("Error metodo EnviarAudio");
+            e.printStackTrace();
+        }
+    
+
     }
 }
