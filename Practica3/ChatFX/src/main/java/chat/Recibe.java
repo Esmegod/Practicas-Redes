@@ -113,7 +113,7 @@ public class Recibe extends Thread {
                         }                        
                     }
                     else{//Es mensaje privado de tipo 3 
-                        if(destinatario.equals(usuario) || remitente.equals(usuario){
+                        if(destinatario.equals(usuario) || remitente.equals(usuario)){
                             String nombre = recibeAudio(dis);
                             if(nombre != null){
                                 Platform.runLater(new Runnable() {
