@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.nio.file.Files;
@@ -148,7 +149,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         imagenButton.setBackground(Color.white);
         imagenButton.setBounds(680, 8, 30, 30);
         imagenButton.addActionListener(this);
-        areaMensajes.add(imagenButton);
+        //areaMensajes.add(imagenButton);
         
         microButton = new JButton();
         ImageIcon microIcon = new ImageIcon("img/microphone.png");
@@ -156,7 +157,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
         microButton.setOpaque(true);
         microButton.setBorderPainted(false);
         microButton.setBackground(Color.white);
-        microButton.setBounds(720, 8, 30, 30);
+        microButton.setBounds(680, 8, 30, 30);
         microButton.addActionListener(this);
         areaMensajes.add(microButton);
         
@@ -289,6 +290,11 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
                     File audioFile = new File("Audios"+usuario+"/"+nombre);
                     byte[] audioBytes = Files.readAllBytes(audioFile.toPath());               
                     enviarAudio(audioBytes,destinatario, grupo, nombre);
+                    //Prueba
+                    // File audioFilePrueba = new File("Audios"+usuario+"/Prueba.wav");
+                    // FileOutputStream fosPrueba = new FileOutputStream(audioFilePrueba);
+                    // fosPrueba.write(audioBytes);
+                    // fosPrueba.close();
                 }catch(Exception ex){
                     System.out.println("Error al enviar audio");
                     ex.printStackTrace();
@@ -311,7 +317,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
     }
 
     public void enviarAudio(byte [] audioBytes, String destinatario, InetAddress grupo, String nombre){ 
-        int tam = 65000;
+        int tam = 500;
         boolean esExacto = false;
         try{
             if(audioBytes.length>tam){  //se envian muchos paquetes
@@ -338,6 +344,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
                     m.send(p);
                     baos.close();
                     dos.close();
+           
                 }
                 if(audioBytes.length%tam>0){//Se envian los sobrates
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -361,6 +368,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
                     m.send(p);
                     baos.close();
                     dos.close();
+                 
                 }
             }else{ //Se envia solo un paquete 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -389,7 +397,7 @@ public class Chat extends JFrame implements KeyListener, ActionListener{
             System.out.println("Error metodo EnviarAudio");
             e.printStackTrace();
         }
-    
+        
 
     }
 }

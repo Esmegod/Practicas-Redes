@@ -25,6 +25,7 @@ public class Recibe extends Thread {
     ArrayList<String> usuariosConectados = new ArrayList<>();
     JComboBox<String> combobox;
     ByteArrayOutputStream audioBytes = new ByteArrayOutputStream();
+   
     
     String encabezadoConectados  ="<head><style>"+
         "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');"+
@@ -87,7 +88,7 @@ public class Recibe extends Thread {
                                     webEngine.loadContent(mensaje);
                                 }}); 
                         }
-                    }else{//Mensaje de tipo 5 (Se actualiza la lista de usuarios (en HTML y combobox)
+                    }else if(tipoMensaje==5){//Mensaje de tipo 5 (Se actualiza la lista de usuarios (en HTML y combobox)
                         if(destinatario.equals(usuario)){
                             usuariosConectados.clear();
                             if(obj instanceof ArrayList<?>){
@@ -110,6 +111,25 @@ public class Recibe extends Thread {
                                 }
                             });
                         }                        
+                    }
+                    else{//Es mensaje privado de tipo 3 
+                        if(destinatario.equals(usuario) || remitente.equals(usuario){
+                            String nombre = recibeAudio(dis);
+                            if(nombre != null){
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run(){
+                                    System.out.println(nombre);
+                                    String mensajeAudio = "<div class='msj'><p class='nombre'>"+remitente+" ha enviado un mensaje para " + destinatario + "</p><div class='flex'>"+
+                                    "<img src='img\\ondas.png' alt='usuario' class='avatar'>"+
+                                    "<div class='mensaje flex'><audio controls><source src='Audios"+usuario+"\\"+nombre+"' type=\"audio/mp3\">Not Supported</audio></div>"+
+                                    "</div></div>";           
+                                    mensaje += mensajeAudio;
+                                    webEngine.loadContent(mensaje); 
+                                }}); 
+                            }
+                        }
+                        
                     }
                 }else{//Es para todos
                     if(tipoMensaje == 1){//Es un mensaje normal
@@ -159,7 +179,20 @@ public class Recibe extends Thread {
                                 mensajeMedioConectados ="";
                             }}); 
                     }else if(tipoMensaje == 3){//Recibe audiio  
-                        recibeAudio(dis);
+                        String nombre = recibeAudio(dis);
+                        if(nombre != null){
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run(){
+                                System.out.println(nombre);
+                                String mensajeAudio = "<div class='msj'><p class='nombre'>"+remitente+" ha enviado un mensaje para todos</p><div class='flex'>"+
+                                "<img src='img\\ondas.png' alt='usuario' class='avatar'>"+
+                                "<div class='mensaje flex'><audio controls><source src='Audios"+usuario+"\\"+nombre+"' type=\"audio/mp3\">Not Supported</audio></div>"+
+                                "</div></div>";           
+                                mensaje += mensajeAudio;
+                                webEngine.loadContent(mensaje); 
+                            }}); 
+                        }
                         
                     }else if(tipoMensaje == 4){//Anuncio para decir goodbye :c
 
@@ -173,7 +206,8 @@ public class Recibe extends Thread {
         } 
     }
 
-    public void recibeAudio(ObjectInputStream dis){
+    public String recibeAudio(ObjectInputStream dis){
+        String nombreReturn = null;
         try{
             String nombre = dis.readUTF();
             boolean esExacto = dis.readBoolean();
@@ -181,24 +215,26 @@ public class Recibe extends Thread {
             int totalPaquetes = dis.readInt();
             int tamPaquete = dis.readInt();
             byte[] bMsj = new byte[tamPaquete];
-            dis.read(bMsj);
-           
+            dis.read(bMsj,0,tamPaquete);
+            
             if((!esExacto && noPaquete==totalPaquetes) || (esExacto && noPaquete == totalPaquetes-1) || totalPaquetes==1){
-                audioBytes.write(bMsj);
+                audioBytes.write(bMsj,0, bMsj.length);
                 audioBytes.flush();
                 File audioFile = new File("Audios"+usuario+"/"+nombre);
                 FileOutputStream fos = new FileOutputStream(audioFile);
                 fos.write(audioBytes.toByteArray());
                 fos.close();
                 audioBytes.reset();
+                nombreReturn = nombre;
             }
             else{
-                audioBytes.write(bMsj);
-                // audioBytes.flush();
+                audioBytes.write(bMsj,0, bMsj.length);
+                audioBytes.flush();
             }
-
+         
         }catch(Exception e){
             System.out.println("Error al recibir paquete");
         }
+        return nombreReturn;
     }
 }
