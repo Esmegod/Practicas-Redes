@@ -40,8 +40,7 @@ public class ServidorWeb
 					System.out.println("Por el puerto: "+socket.getPort());
 					System.out.println("Datos: "+line+"\r\n\r\n");
 					
-					if(line.indexOf("?")==-1)
-					{
+					if(line.indexOf("?")==-1){
 						getArch(line);
 						if(FileName.compareTo("")==0)
 						{

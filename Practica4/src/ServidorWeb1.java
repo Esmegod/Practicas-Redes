@@ -15,6 +15,7 @@ public class ServidorWeb1{
         DataOutputStream dos;
         DataInputStream dis;
         protected String FileName;
+        protected String mime;
 
         public Manejador(Socket _socket) throws Exception{
             this.socket=_socket;
@@ -47,12 +48,12 @@ public class ServidorWeb1{
                 StringTokenizer st1= new StringTokenizer(peticion,"\n");
                 String line = st1.nextToken();
 
-                if(line.indexOf("?")==-1){
-                    getArch(line);
+                if(line.indexOf("?")==-1){ //No se solicita un recurso, sino la página principal
+                    getArch(line, st1);
                     if(FileName.compareTo("")==0){
-                        SendA("index.htm",dos);
+                        SendA("index.html",dos, mime);
                     }else{
-                        SendA(FileName,dos);
+                        SendA(FileName,dos, mime);
                     }
                 }else if(line.toUpperCase().startsWith("GET")){
                         StringTokenizer tokens = new StringTokenizer(line,"?");
@@ -79,6 +80,9 @@ public class ServidorWeb1{
                         dos.flush();
                         dos.close();
                         socket.close();
+                }else if(line.toUpperCase().startsWith("POST")){
+                    System.out.println(peticion);        
+                
                 }else{
                         dos.write("HTTP/1.0 501 Not Implemented\r\n".getBytes());
                         dos.flush();
@@ -90,13 +94,27 @@ public class ServidorWeb1{
             }
         }//run
                         
-        public void getArch(String line){
+        public void getArch(String line, StringTokenizer st){
             int i;
             int f;
             if(line.toUpperCase().startsWith("GET")){
                 i=line.indexOf("/");
                 f=line.indexOf(" ",i);
                 FileName=line.substring(i+1,f);
+                mime = "text/html";
+            }
+            else if(line.toUpperCase().startsWith("POST")){
+                String token;
+                while((token = st.nextToken())!=null)
+                    if(token.contains("imagen-abril")){
+                        //Ttoken = imagen-abril=2022-04-19
+                        String[] s = token.split("=");
+                        FileName = "abrilNasa/"+s[1] + ".jpg";
+                        mime = "image/jpeg";
+                        break;
+                    }
+                    
+                }
             }
         }
                         
@@ -121,7 +139,7 @@ public class ServidorWeb1{
                 }catch(IOException e){}
         }*/
                         
-        public void SendA(String arg, DataOutputStream dos1){
+        public void SendA(String arg, DataOutputStream dos1, String mime){
             try{
                int b_leidos=0;
                DataInputStream dis2 = new DataInputStream(new FileInputStream(arg));
@@ -134,7 +152,7 @@ public class ServidorWeb1{
                sb = sb +"HTTP/1.0 200 ok\n";
                sb = sb +"Server: Axel Server/1.0 \n";
                sb = sb +"Date: " + new Date()+" \n";
-               sb = sb +"Content-Type: text/html \n";
+               sb = sb +"Content-Type: "+mime+" \n";
                sb = sb +"Content-Length: "+tam_archivo+" \n";
                sb = sb +"\n";
                dos1.write(sb.getBytes());
@@ -153,7 +171,7 @@ public class ServidorWeb1{
            }
         }
                         
-    }
+    
 		
     public ServidorWeb1() throws Exception{
         System.out.println("Iniciando Servidor.......");
