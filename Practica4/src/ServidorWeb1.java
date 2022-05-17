@@ -101,7 +101,8 @@ public class ServidorWeb1{
                 i=line.indexOf("/");
                 f=line.indexOf(" ",i);
                 FileName=line.substring(i+1,f);
-                mime = "text/html";
+                if(line.contains(".pdf")) mime = "application/pdf";
+                else mime = "text/html";
             }
             else if(line.toUpperCase().startsWith("POST")){
                 String token;
