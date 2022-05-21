@@ -68,15 +68,16 @@ public class ServidorWeb1{
                             Content-Type: application/pdf
                         **/
                         String token = "";
-                        int bytes = 0;
+                        int bytes;
                         String mimePut = "";
                         while((token = st1.nextToken())!=null){
                             if(token.contains("Content-Length")){
-                                String[] s = token.split(" ");
+                                String[] s = token.split(":");
                               
-                                System.out.println(s[1]);
-                                bytes = Integer.valueOf(s[1]);
-                                mimePut = st1.nextToken().split(" ")[1];
+                                System.out.println(s[1].trim());
+                                bytes = Integer.valueOf(s[1].trim());
+                                mimePut = st1.nextToken().split(":")[1].trim();
+                                System.out.println(mimePut);
                                 break;    
                             }
                         }
@@ -150,9 +151,7 @@ public class ServidorWeb1{
                         socket.close();
                 }
             }catch(Exception e){
-                System.out.println("-----------------------------------");
-                // e.printStackTrace();
-                System.out.println("Error: " + e.getMessage());
+                e.printStackTrace();
             }
         }//run
                         
