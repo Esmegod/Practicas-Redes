@@ -6,7 +6,7 @@ public class ServidorWeb1{
     
     public static final int PUERTO=8000;
     ServerSocket ss;
-		
+    
     class Manejador extends Thread{
         protected Socket socket;
         protected PrintWriter pw;
@@ -27,6 +27,9 @@ public class ServidorWeb1{
                 dis = new DataInputStream(socket.getInputStream());
                 byte[] b = new byte[1024];
                 int t = dis.read(b);
+                if(t==-1){
+                    return;
+                }
                 String peticion = new String(b,0,t);
                 System.out.println("t: " + t);
 
@@ -49,11 +52,71 @@ public class ServidorWeb1{
                 String line = st1.nextToken();
 
                 if(line.indexOf("?")==-1){ //No se solicita un recurso, sino la página principal
-                    getArch(line, st1);
-                    if(FileName.compareTo("")==0){
-                        SendA("index.html",dos, mime);
-                    }else{
+                    if(line.toUpperCase().startsWith("GET")){
+                        getArch(line, st1);
+                        if(FileName.compareTo("")==0){
+                            SendA("index.html",dos,mime);
+                        }else{
+                            SendA(FileName,dos,mime);
+                        }
+                    }else if(line.toUpperCase().startsWith("POST")){
+                        getArch(line, st1);
                         SendA(FileName,dos, mime);
+                    }else if(line.toUpperCase().startsWith("PUT")){ 
+                        /**
+                            Content-Length: 821242
+                            Content-Type: application/pdf
+                        **/
+                        String token = "";
+                        int bytes = 0;
+                        String mimePut = "";
+                        while((token = st1.nextToken())!=null){
+                            if(token.contains("Content-Length")){
+                                String[] s = token.split(" ");
+                              
+                                System.out.println(s[1]);
+                                bytes = Integer.valueOf(s[1]);
+                                mimePut = st1.nextToken().split(" ")[1];
+                                break;    
+                            }
+                        }
+                        // Se inicia con la lectura del archivo
+                        try{
+                            int b_leidos=0;
+                            FileOutputStream fos = new FileOutputStream(new File("archivo.pdf"));
+                            fos.write(st1.nextToken().getBytes());
+                            fos.flush();
+                            fos.close();
+                            
+                            // DataInputStream dis2 = new DataInputStream(new FileInputStream("archivo.pdf"));
+                            // byte[] buf = new byte[1024];
+                            // int x=0;
+                            // File ff = new File(arg);			
+                            // long tam_archivo = ff.length(),cont=0;
+                            // /***********************************************/
+                            // String sb = "";
+                            // sb = sb +"HTTP/1.0 200 ok\n";
+                            // sb = sb +"Server: Axel Server/1.0 \n";
+                            // sb = sb +"Date: " + new Date()+" \n";
+                            // sb = sb +"Content-Type: "+mime+" \n";
+                            // sb = sb +"Content-Length: "+tam_archivo+" \n";
+                            // sb = sb +"\n";
+                            // dos1.write(sb.getBytes());
+                            // dos1.flush();
+                            // /***********************************************/
+                            // while(cont<tam_archivo){
+                            //     x = dis2.read(buf);
+                            //     dos1.write(buf,0,x);
+                            //     cont=cont+x;
+                            //     dos1.flush();
+                            // }
+                            // dis2.close();
+                            // dos1.close();
+                        }catch(Exception e){
+                            System.out.println("Error en SendA");
+                            System.out.println(e.getMessage());
+                        }
+
                     }
                 }else if(line.toUpperCase().startsWith("GET")){
                         StringTokenizer tokens = new StringTokenizer(line,"?");
@@ -80,9 +143,6 @@ public class ServidorWeb1{
                         dos.flush();
                         dos.close();
                         socket.close();
-                }else if(line.toUpperCase().startsWith("POST")){
-                    System.out.println(peticion);        
-                
                 }else{
                         dos.write("HTTP/1.0 501 Not Implemented\r\n".getBytes());
                         dos.flush();
@@ -90,7 +150,9 @@ public class ServidorWeb1{
                         socket.close();
                 }
             }catch(Exception e){
-                e.printStackTrace();
+                System.out.println("-----------------------------------");
+                // e.printStackTrace();
+                System.out.println("Error: " + e.getMessage());
             }
         }//run
                         
@@ -114,7 +176,6 @@ public class ServidorWeb1{
                         mime = "image/jpeg";
                         break;
                     }
-                    
                 }
             }
         }
@@ -123,12 +184,12 @@ public class ServidorWeb1{
                 int fSize = 0;
                 byte[] buffer = new byte[4096];
                 try{
-                   DataInputStream dis1 = new DataInputStream(new FileInputStream(fileName));	
-                   int x = 0;
-                   File ff = new File("fileName");
-                   long tam, cont=0;
-                   tam = ff.length();
-                   while(cont<tam){
+                    DataInputStream dis1 = new DataInputStream(new FileInputStream(fileName));	
+                    int x = 0;
+                    File ff = new File("fileName");
+                    long tam, cont=0;
+                    tam = ff.length();
+                    while(cont<tam){
                         x = dis1.read(buffer);
                         dos.write(buffer,0,x);
                         cont =cont+x;
@@ -142,34 +203,35 @@ public class ServidorWeb1{
                         
         public void SendA(String arg, DataOutputStream dos1, String mime){
             try{
-               int b_leidos=0;
-               DataInputStream dis2 = new DataInputStream(new FileInputStream(arg));
-               byte[] buf = new byte[1024];
-               int x=0;
-               File ff = new File(arg);			
-               long tam_archivo = ff.length(),cont=0;
-               /***********************************************/
-               String sb = "";
-               sb = sb +"HTTP/1.0 200 ok\n";
-               sb = sb +"Server: Axel Server/1.0 \n";
-               sb = sb +"Date: " + new Date()+" \n";
-               sb = sb +"Content-Type: "+mime+" \n";
-               sb = sb +"Content-Length: "+tam_archivo+" \n";
-               sb = sb +"\n";
-               dos1.write(sb.getBytes());
-               dos1.flush();
-               /***********************************************/
-               while(cont<tam_archivo){
-                   x = dis2.read(buf);
-                   dos1.write(buf,0,x);
-                   cont=cont+x;
-                   dos1.flush();
-               }
-               dis2.close();
-               dos1.close();
-           }catch(Exception e){
-               System.out.println(e.getMessage());
-           }
+                int b_leidos=0;
+                DataInputStream dis2 = new DataInputStream(new FileInputStream(arg));
+                byte[] buf = new byte[1024];
+                int x=0;
+                File ff = new File(arg);			
+                long tam_archivo = ff.length(),cont=0;
+                /***********************************************/
+                String sb = "";
+                sb = sb +"HTTP/1.0 200 ok\n";
+                sb = sb +"Server: Axel Server/1.0 \n";
+                sb = sb +"Date: " + new Date()+" \n";
+                sb = sb +"Content-Type: "+mime+" \n";
+                sb = sb +"Content-Length: "+tam_archivo+" \n";
+                sb = sb +"\n";
+                dos1.write(sb.getBytes());
+                dos1.flush();
+                /***********************************************/
+                while(cont<tam_archivo){
+                    x = dis2.read(buf);
+                    dos1.write(buf,0,x);
+                    cont=cont+x;
+                    dos1.flush();
+                }
+                dis2.close();
+                dos1.close();
+            }catch(Exception e){
+                System.out.println("Error en SendA");
+                System.out.println(e.getMessage());
+            }
         }
                         
     
