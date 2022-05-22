@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ServidorWeb1{
@@ -25,7 +26,7 @@ public class ServidorWeb1{
             try{
                 dos = new DataOutputStream(socket.getOutputStream());
                 dis = new DataInputStream(socket.getInputStream());
-                byte[] b = new byte[1024];
+                byte[] b = new byte[10000000];
                 int t = dis.read(b);
                 if(t==-1){
                     return;
@@ -68,9 +69,10 @@ public class ServidorWeb1{
                             Content-Type: application/pdf
                         **/
                         String token = "";
-                        int bytes;
+                        int bytes=0;
                         String mimePut = "";
                         while((token = st1.nextToken())!=null){
+
                             if(token.contains("Content-Length")){
                                 String[] s = token.split(":");
                               
@@ -83,41 +85,41 @@ public class ServidorWeb1{
                         }
                         // Se inicia con la lectura del archivo
                         try{
-                            int b_leidos=0;
-                            FileOutputStream fos = new FileOutputStream(new File("archivo.pdf"));
-                            fos.write(st1.nextToken().getBytes());
+                            String extension = mimePut.split("/")[1];
+                            if(extension.equals("plain"))
+                                extension = "txt";
+                            st1.nextToken();
+                            FileOutputStream fos = new FileOutputStream(new File("archivosRecibidos/archivo."+extension));
+                            int pos = t-bytes;   
+                            byte[] contenido = Arrays.copyOfRange(b, pos, t); 
+                            fos.write(contenido);
                             fos.flush();
                             fos.close();
-                            
-                            // DataInputStream dis2 = new DataInputStream(new FileInputStream("archivo.pdf"));
-                            // byte[] buf = new byte[1024];
-                            // int x=0;
-                            // File ff = new File(arg);			
-                            // long tam_archivo = ff.length(),cont=0;
-                            // /***********************************************/
-                            // String sb = "";
-                            // sb = sb +"HTTP/1.0 200 ok\n";
-                            // sb = sb +"Server: Axel Server/1.0 \n";
-                            // sb = sb +"Date: " + new Date()+" \n";
-                            // sb = sb +"Content-Type: "+mime+" \n";
-                            // sb = sb +"Content-Length: "+tam_archivo+" \n";
-                            // sb = sb +"\n";
-                            // dos1.write(sb.getBytes());
-                            // dos1.flush();
-                            // /***********************************************/
-                            // while(cont<tam_archivo){
-                            //     x = dis2.read(buf);
-                            //     dos1.write(buf,0,x);
-                            //     cont=cont+x;
-                            //     dos1.flush();
-                            // }
-                            // dis2.close();
-                            // dos1.close();
+                            /***********************************************/
+                            String sb = "";
+                            sb = sb +"HTTP/1.0 201 created\n";
+                            sb = sb +"Server: Mesfer Server/1.0 \n";
+                            sb = sb +"Date: " + new Date()+" \n";
+                            sb = sb +"\n";
+                            dos.write(sb.getBytes());
+                            dos.flush();
+                            /***********************************************/
+                        
                         }catch(Exception e){
-                            System.out.println("Error en SendA");
-                            System.out.println(e.getMessage());
+                            System.out.println("Error en lectura de archivo");
+                            e.printStackTrace();
+                            /***********************************************/
+                            String sb = "";
+                            sb = sb +"HTTP/1.0 500 error\n";
+                            sb = sb +"Server: Mesfer Server/1.0 \n";
+                            sb = sb +"Date: " + new Date()+" \n";
+                            sb = sb +"\n";
+                            dos.write(sb.getBytes());
+                            dos.flush();
+                            /***********************************************/
+                        }finally{
+                            dos.close();
                         }
-
                     }
                 }else if(line.toUpperCase().startsWith("GET")){
                         StringTokenizer tokens = new StringTokenizer(line,"?");
@@ -179,27 +181,6 @@ public class ServidorWeb1{
             }
         }
                         
-        /*public void SendA(String fileName,Socket sc,DataOutputStream dos){
-                int fSize = 0;
-                byte[] buffer = new byte[4096];
-                try{
-                    DataInputStream dis1 = new DataInputStream(new FileInputStream(fileName));	
-                    int x = 0;
-                    File ff = new File("fileName");
-                    long tam, cont=0;
-                    tam = ff.length();
-                    while(cont<tam){
-                        x = dis1.read(buffer);
-                        dos.write(buffer,0,x);
-                        cont =cont+x;
-                        dos.flush();
-                    }
-                    dis.close();
-                    dos.close();
-                }catch(FileNotFoundException e){
-                }catch(IOException e){}
-        }*/
-                        
         public void SendA(String arg, DataOutputStream dos1, String mime){
             try{
                 int b_leidos=0;
@@ -211,7 +192,7 @@ public class ServidorWeb1{
                 /***********************************************/
                 String sb = "";
                 sb = sb +"HTTP/1.0 200 ok\n";
-                sb = sb +"Server: Axel Server/1.0 \n";
+                sb = sb +"Server: Mesfer Server/1.0 \n";
                 sb = sb +"Date: " + new Date()+" \n";
                 sb = sb +"Content-Type: "+mime+" \n";
                 sb = sb +"Content-Length: "+tam_archivo+" \n";
