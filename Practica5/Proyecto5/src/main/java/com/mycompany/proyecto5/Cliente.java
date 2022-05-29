@@ -5,20 +5,24 @@
 
 package com.mycompany.proyecto5;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.util.Set;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
  * @author 52552
  */
 public class Cliente {
-    static int distancia = 3;
+    static int distancia = 2;
     static ArrayList<String> arrD = new ArrayList<String>();
     static ArrayList<String> arrPV = new ArrayList<String>(); //Arreglo con rutas absolutas
 
@@ -33,7 +37,7 @@ public class Cliente {
         String urlString = lineas[lineas.length-1]; 
         // distancia = ;
         pedirRecurso(urlString, 0);
-
+// 
     }
 
     /*
@@ -60,61 +64,98 @@ public class Cliente {
             }
         }
     */
-
-   //recursoURL va a ser la direccion absoluta 
-    public static int pedirRecurso(String recursoURL, int nivel){
+    
+    public static int pedirRecurso(String recursoURL,  int nivel){
         if(nivel > distancia)
             return 0;
         try{
+            if(!recursoURL.endsWith("/") && !recursoURL.contains(".")){
+                recursoURL+="/";
+            }
+            
             URL url = new URL(recursoURL);
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            //Escribe en el flujo el archivo dependiendo de la url 
-            DataInputStream dis = new DataInputStream(httpUrlConnection.getInputStream());
             int code = httpUrlConnection.getResponseCode();
             int length = httpUrlConnection.getContentLength();
             String type = httpUrlConnection.getContentType();
+            
+            System.out.println("lenght: " + length);
+            System.out.println("type: " + type);
+            
             if(code == 200){ //ok
-               
                 if(!type.contains("html")){//Es un recurso(pdf, jpeg, etc)
                     if(!arrD.contains(recursoURL)){
                         //https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
                         //Se convierte en rutaAbsoluta/pagina/docs/slider/cartelExpoESCOM2022.pdf
                         String absPath = new File("").getAbsolutePath().replace("\\", "/");
-                        String nombre = absPath+"/pagina"+recursoURL.substring(recursoURL.indexOf("/", 9));
+                        String host = url.getHost();
+                        String path = url.getPath();
+                        String nombre = absPath+"/"+host+path;
                         System.out.println(nombre);
-                        new Descargar(dis, length, nombre).start();
+                        new Descargar(recursoURL, length, nombre).start();
                         arrD.add(recursoURL);
                     }
                     else return 0; 
                 }else{//Es html
                     if(!arrPV.contains(recursoURL)){//Descarga el html y busca referencias
-                        byte[] b = new byte[65535];
-                        int t = dis.read(b);
-                        String respuesta = new String(b, 0, t);
-                        System.out.println(respuesta);
-                        StringTokenizer st = new StringTokenizer(respuesta, "\n");
-                        while(st.hasMoreElements()){
-                            String lineaHTML = st.nextToken();
-                            if(lineaHTML.contains("href") || lineaHTML.contains("src")){
-                                //<a href  = "blablala/bjbabja" target="_blank">
-                                lineaHTML = lineaHTML.replace("'", "\"");
-                                int i = lineaHTML.contains("href")?lineaHTML.indexOf("href"):lineaHTML.indexOf("src");
-                                int j = lineaHTML.indexOf("\"", i);
-                                int k = lineaHTML.indexOf("\"", j+1);
-                                String urlRelativa = lineaHTML.substring(j+1,k);
-                                System.out.println("i:"+i+"\t"+"j:"+j+"\t"+"k:"+k+"\t"+urlRelativa);
-                                //buscar en la linea href="algo";
-                                //pedirRecurso 
-                            }
+                        //Crea ruta para el almacenamiento local 
+                        String absPath = new File("").getAbsolutePath().replace("\\", "/");      
+                        String host = url.getHost();
+                        String path = url.getPath();
+                        if(!path.contains(".")){
+                            path+="index.html";
                         }
+                        String nombre = absPath+"/"+host+path;
+                        System.out.println("Ubicacion: " + nombre);
+                        new Descargar(recursoURL, length, nombre).start();
+                        //Obtener los links 
+                        for (String link : findLinks(recursoURL, host)) {
+                            System.out.println(link);
+                            pedirRecurso(link, nivel+1);
+                            arrPV.add(link);
+                        }
+                        
+                        
                     }
                 }
+            }else{
+                System.out.println("Error code: " + httpUrlConnection.getResponseCode() + " con url " + recursoURL);
             }
         }catch(Exception e){
             System.out.println("Error al conectarse");
             e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
         }
         return 0;
+    }
+    
+     private static Set<String> findLinks(String url, String dominio) throws java.io.IOException {
+        Set<String> links = new HashSet<>();
+        Document doc = Jsoup.connect(url)
+                .timeout(3000)
+                .get();
+        Elements elements = doc.select("a[href]");
+        Elements elements2 = doc.select("img[src]");
+        Elements elements3 = doc.select("link[href]");
+        for (Element element : elements) {
+            String rutaAbsoluta = element.absUrl("href");
+            if(rutaAbsoluta.contains(dominio)){
+                links.add(rutaAbsoluta);
+            }
+        }
+         for (Element element : elements2) {
+            String rutaAbsoluta = element.absUrl("src");
+            if(rutaAbsoluta.contains(dominio)){
+                links.add(rutaAbsoluta);
+            }
+        }
+        for (Element element : elements3) {
+         String rutaAbsoluta = element.absUrl("href");
+            if(rutaAbsoluta.contains(dominio)){
+                links.add(rutaAbsoluta);
+            }
+        }
+        return links; 
     }
 }
   

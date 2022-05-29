@@ -1,0 +1,57 @@
+.txtBlanco{
+    color:#FFFFFF !important;
+}
+
+.txtNegro{
+    color:#000000 !important;
+}
+
+.txtGris{
+	color:#343A40 !important;
+}
+
+.degradado{
+	/* //Comentado el 100222 por cambio de imagen insticional
+	background-color:#5D0227;
+	background-image: linear-gradient(#5D0227,#343A40);
+	*/
+	background: rgb(0,85,128);
+	background: linear-gradient(180deg, rgba(0,85,128,1) 0%, rgba(0,102,153,1) 75%, rgba(0,153,230,1) 100%);
+}
+
+.slide-number{
+	color:#006699 !important;
+	font-weight: bolder !important;
+}
+
+.txtContenidos{ font-size: 1.5em !important; }
+
+audio{
+	position:relative; width:100%;
+}
+
+@media(min-width: 800px){
+	#top-bar{
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 45px;
+		background-color: #FFF;
+		z-index: 299;
+    }
+    
+	#header{
+        margin-top: 45px;
+    }
+
+    #header.sticky-header #header-wrap{
+        top: 45px;
+    }
+}
+
+@media(max-width: 800px){
+	.txtBlancoMoviles{
+		color:#FFF !important;
+	}
+}
