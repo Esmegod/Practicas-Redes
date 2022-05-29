@@ -74,6 +74,7 @@ public class Cliente {
             int length = httpUrlConnection.getContentLength();
             String type = httpUrlConnection.getContentType();
             if(code == 200){ //ok
+               
                 if(!type.contains("html")){//Es un recurso(pdf, jpeg, etc)
                     if(!arrD.contains(recursoURL)){
                         //https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
@@ -86,20 +87,26 @@ public class Cliente {
                     }
                     else return 0; 
                 }else{//Es html
-                    if(!arrPV.contains(recursoURL)){//Descarga el html y busca "a" e "img"
-
+                    if(!arrPV.contains(recursoURL)){//Descarga el html y busca referencias
                         byte[] b = new byte[65535];
                         int t = dis.read(b);
-                        StringTokenizer st = new StringTokenizer(b.toString());
+                        String respuesta = new String(b, 0, t);
+                        System.out.println(respuesta);
+                        StringTokenizer st = new StringTokenizer(respuesta, "\n");
                         while(st.hasMoreElements()){
                             String lineaHTML = st.nextToken();
-                            if(lineaHTML.contains("<a")){
-                                
+                            if(lineaHTML.contains("href") || lineaHTML.contains("src")){
+                                //<a href  = "blablala/bjbabja" target="_blank">
+                                lineaHTML = lineaHTML.replace("'", "\"");
+                                int i = lineaHTML.contains("href")?lineaHTML.indexOf("href"):lineaHTML.indexOf("src");
+                                int j = lineaHTML.indexOf("\"", i);
+                                int k = lineaHTML.indexOf("\"", j+1);
+                                String urlRelativa = lineaHTML.substring(j+1,k);
+                                System.out.println("i:"+i+"\t"+"j:"+j+"\t"+"k:"+k+"\t"+urlRelativa);
                                 //buscar en la linea href="algo";
                                 //pedirRecurso 
                             }
                         }
-
                     }
                 }
             }
