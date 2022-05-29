@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -80,9 +81,21 @@ public class Cliente {
                         new Descargar(dis, length, nombre).start();
                         arrD.add(recursoURL);
                     }
-                    
+                    else return 0; 
                 }else{//Es html
                     if(!arrPV.contains(recursoURL)){//Descarga el html y busca "a" e "img"
+
+                        byte[] b = new byte[65535];
+                        int t = dis.read(b);
+                        StringTokenizer st = new StringTokenizer(b.toString());
+                        while(st.hasMoreElements()){
+                            String lineaHTML = st.nextToken();
+                            if(lineaHTML.contains("<a")){
+                                
+                                //buscar en la linea href="algo";
+                                //pedirRecurso 
+                            }
+                        }
 
                     }
                 }
