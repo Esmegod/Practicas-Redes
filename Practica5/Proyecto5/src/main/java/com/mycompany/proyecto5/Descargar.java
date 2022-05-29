@@ -18,7 +18,10 @@ public class Descargar extends Thread{
     public void run(){
         try{
             int contador = 0;
-            FileOutputStream fos = new FileOutputStream(new File(nombre));
+            File file = new File(nombre);
+            if(!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(file);
             while(contador < length){
                 byte[] b = new byte[65535];
                 int t = dis.read(b);

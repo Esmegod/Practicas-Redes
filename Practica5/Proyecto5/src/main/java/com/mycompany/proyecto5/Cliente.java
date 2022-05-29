@@ -6,6 +6,7 @@
 package com.mycompany.proyecto5;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -75,9 +76,11 @@ public class Cliente {
             if(code == 200){ //ok
                 if(!type.contains("html")){//Es un recurso(pdf, jpeg, etc)
                     if(!arrD.contains(recursoURL)){
-                        //http://148.204.58.221/axel/aplicaciones/22-2/practicas/practica3_chat.pdf
-                        
-                        String nombre = "Archivo.pdf";
+                        //https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
+                        //Se convierte en rutaAbsoluta/pagina/docs/slider/cartelExpoESCOM2022.pdf
+                        String absPath = new File("").getAbsolutePath().replace("\\", "/");
+                        String nombre = absPath+"/pagina"+recursoURL.substring(recursoURL.indexOf("/", 9));
+                        System.out.println(nombre);
                         new Descargar(dis, length, nombre).start();
                         arrD.add(recursoURL);
                     }
