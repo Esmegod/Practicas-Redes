@@ -31,6 +31,7 @@ public class Cliente {
         String urlString = lineas[lineas.length-1]; 
         // distancia = ;
         pedirRecurso(urlString, 0);
+
     }
 
     /*
@@ -58,7 +59,7 @@ public class Cliente {
         }
     */
 
-  
+   //recursoURL va a ser la direccion absoluta 
     public static int pedirRecurso(String recursoURL, int nivel){
         if(nivel > distancia)
             return 0;
@@ -74,13 +75,15 @@ public class Cliente {
                 if(!type.contains("html")){//Es un recurso(pdf, jpeg, etc)
                     if(!arrD.contains(recursoURL)){
                         //http://148.204.58.221/axel/aplicaciones/22-2/practicas/practica3_chat.pdf
+                        
                         String nombre = "Archivo.pdf";
-                        new Descargar(dis, nivel+1, nombre).start();
+                        new Descargar(dis, length, nombre).start();
+                        arrD.add(recursoURL);
                     }
                     
                 }else{//Es html
                     if(!arrPV.contains(recursoURL)){//Descarga el html y busca "a" e "img"
-                        
+
                     }
                 }
             }

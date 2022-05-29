@@ -1,6 +1,5 @@
 package com.mycompany.proyecto5;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +30,5 @@ public class Descargar extends Thread{
             System.out.println("Error al descargar archivo");
             e.printStackTrace();
         }
-         
     }
 }
