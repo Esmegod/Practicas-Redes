@@ -45,7 +45,6 @@ public class Cliente {
         }
         distancia = Integer.parseInt(comandos[2]);
         poolSize = Integer.parseInt(comandos[4]);
-     
         pool = Executors.newFixedThreadPool(poolSize);
         String lineas [] = comando.split(" ");
         String urlString = lineas[lineas.length-1]; 
@@ -112,7 +111,7 @@ public class Cliente {
                         String host = url.getHost();
                         String path = url.getPath();
                         String nombre = absPath+"/"+host+path;
-                        pool.execute(new Descargar(recursoURL, length, nombre));
+                        pool.execute(new Descargar(recursoURL, length, nombre, false));
                         arrD.add(recursoURL);
                     }
                     else return 0; 
@@ -126,7 +125,7 @@ public class Cliente {
                             path+="index.html";
                         }
                         String nombre = absPath+"/"+host+path;
-                        pool.execute(new Descargar(recursoURL, length, nombre));
+                        pool.execute(new Descargar(recursoURL, length, nombre, true));
                         //Obtener los links 
                         for (String link : findLinks(recursoURL, host)) {
                             pedirRecurso(link, nivel+1);
