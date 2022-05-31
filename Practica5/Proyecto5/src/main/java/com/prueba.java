@@ -16,11 +16,13 @@ public class prueba {
         frutas.add("sandia");
         frutas.add("melon");
         frutas.add("guayaba");
-
-         for (String link : findLinks("https://www.escom.ipn.mx/")) {
+        String url = "./../imagenes/gifs/perrito.gif";
+         /*for (String link : findLinks("https://www.escom.ipn.mx/")) {
             System.out.println(link);
-        }
-        
+        }*/
+        String nueva = url.replace("../", "").replace("./", "");
+        System.out.println("url: " + url);
+        System.out.println("Nueva: " + nueva);
 
     }
     private static Set<String> findLinks(String url) throws java.io.IOException {

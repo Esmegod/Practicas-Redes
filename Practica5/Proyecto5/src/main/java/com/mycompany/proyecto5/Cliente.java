@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,22 +25,33 @@ import org.jsoup.select.Elements;
  * @author 52552
  */
 public class Cliente {
-    static int distancia = 2;
-    static ArrayList<String> arrD = new ArrayList<String>();
+    static final ArrayList<String> arrD = new ArrayList<String>();
     static ArrayList<String> arrPV = new ArrayList<String>(); //Arreglo con rutas absolutas
+    static ExecutorService pool;
+    static int poolSize=15;
+    static int distancia = 1;
 
     public static void main(String[] args) {
-        //wget -r -t 10 --tries http://148.204.58.221
-        //wget -r -t 10 --tries https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
-        System.out.println("Ingrese el comando");
+        //wget -r 2 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
+        //wget -r 2 -t 15 https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
+        System.out.println("Ingrese el comando: wget -r produndidad -t hilos url");
         Scanner leer = new Scanner(System.in);
         String comando = leer.nextLine();
         leer.close();
+        String comandos[] = comando.split(" ");
+        if(!comandos[0].equals("wget")){
+            System.out.println("No se reconoce el comando");
+            System.exit(0);
+        }
+        distancia = Integer.parseInt(comandos[2]);
+        poolSize = Integer.parseInt(comandos[4]);
+     
+        pool = Executors.newFixedThreadPool(poolSize);
         String lineas [] = comando.split(" ");
         String urlString = lineas[lineas.length-1]; 
         // distancia = ;
         pedirRecurso(urlString, 0);
-// 
+        pool.shutdown();
     }
 
     /*
@@ -79,8 +93,15 @@ public class Cliente {
             int length = httpUrlConnection.getContentLength();
             String type = httpUrlConnection.getContentType();
             
+            System.out.println(recursoURL);
             System.out.println("lenght: " + length);
             System.out.println("type: " + type);
+            if(type == null){
+                System.out.println("Error en el encabezado");
+                System.out.println("-------------------------------");
+                return 0;
+            }
+            System.out.println("-------------------------------");
             
             if(code == 200){ //ok
                 if(!type.contains("html")){//Es un recurso(pdf, jpeg, etc)
@@ -91,8 +112,7 @@ public class Cliente {
                         String host = url.getHost();
                         String path = url.getPath();
                         String nombre = absPath+"/"+host+path;
-                        System.out.println(nombre);
-                        new Descargar(recursoURL, length, nombre).start();
+                        pool.execute(new Descargar(recursoURL, length, nombre));
                         arrD.add(recursoURL);
                     }
                     else return 0; 
@@ -106,11 +126,9 @@ public class Cliente {
                             path+="index.html";
                         }
                         String nombre = absPath+"/"+host+path;
-                        System.out.println("Ubicacion: " + nombre);
-                        new Descargar(recursoURL, length, nombre).start();
+                        pool.execute(new Descargar(recursoURL, length, nombre));
                         //Obtener los links 
                         for (String link : findLinks(recursoURL, host)) {
-                            System.out.println(link);
                             pedirRecurso(link, nivel+1);
                             arrPV.add(link);
                         }
@@ -122,7 +140,7 @@ public class Cliente {
                 System.out.println("Error code: " + httpUrlConnection.getResponseCode() + " con url " + recursoURL);
             }
         }catch(Exception e){
-            System.out.println("Error al conectarse");
+            System.out.println("Error al pedir recurso");
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
         }

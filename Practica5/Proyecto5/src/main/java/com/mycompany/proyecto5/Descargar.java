@@ -15,6 +15,7 @@ public class Descargar extends Thread{
         this.recursoURL = recursoURL; 
         this.length = length;
         this.nombre = nombre;
+        System.out.println(nombre);
     }
     
     public void run(){
@@ -22,7 +23,9 @@ public class Descargar extends Thread{
             URL url = new URL(recursoURL);
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
             DataInputStream dis = new DataInputStream(httpUrlConnection.getInputStream());
-
+            
+            // D:/Fer_Mtz/Desktop/3CM2/Aplicaciones Red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221/icons/back.gif
+            
             int contador = 0;
             File file = new File(nombre);
             if(!file.getParentFile().exists())
