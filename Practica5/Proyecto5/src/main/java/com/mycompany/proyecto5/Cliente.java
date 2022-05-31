@@ -33,7 +33,7 @@ public class Cliente {
 
     public static void main(String[] args) {
         //wget -r 2 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
-        //wget -r 2 -t 15 https://www.escom.ipn.mx/docs/slider/cartelExpoESCOM2022.pdf
+        //wget -r 3 -t 25 https://www.escom.ipn.mx
         System.out.println("Ingrese el comando: wget -r produndidad -t hilos url");
         Scanner leer = new Scanner(System.in);
         String comando = leer.nextLine();
@@ -122,7 +122,7 @@ public class Cliente {
                         String host = url.getHost();
                         String path = url.getPath();
                         if(!path.contains(".")){
-                            path+="index.html";
+                            path+="/index.html";
                         }
                         String nombre = absPath+"/"+host+path;
                         pool.execute(new Descargar(recursoURL, length, nombre, true));
@@ -151,9 +151,8 @@ public class Cliente {
         Document doc = Jsoup.connect(url)
                 .timeout(3000)
                 .get();
-        Elements elements = doc.select("a[href]");
-        Elements elements2 = doc.select("img[src]");
-        Elements elements3 = doc.select("link[href]");
+        Elements elements = doc.select("*[href]");
+        Elements elements2 = doc.select("*[src]");
         for (Element element : elements) {
             String rutaAbsoluta = element.absUrl("href");
             if(rutaAbsoluta.contains(dominio)){
@@ -166,12 +165,7 @@ public class Cliente {
                 links.add(rutaAbsoluta);
             }
         }
-        for (Element element : elements3) {
-         String rutaAbsoluta = element.absUrl("href");
-            if(rutaAbsoluta.contains(dominio)){
-                links.add(rutaAbsoluta);
-            }
-        }
+        
         return links; 
     }
 }

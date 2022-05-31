@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,12 +51,13 @@ public class Descargar extends Thread{
                     if(t == -1){
                         break;
                     }
+                    
                     String html = new String(b,0,t);
                     StringTokenizer st = new StringTokenizer(html, "\n");
                     String linea;
                     while(st.hasMoreTokens()){
                         linea = st.nextToken();
-                        if(linea.contains("src")){
+                        if(linea.contains("src=")){
                             int i = linea.indexOf("src=");
                             int j = linea.indexOf("\"", i+5);
                             String urlReemplazar = linea.substring(i+5, j);
@@ -71,6 +71,7 @@ public class Descargar extends Thread{
                         }
                         fos.write(linea.getBytes());    
                     }
+                    
                 }
             }else{
                 int contador = 0;
@@ -91,14 +92,13 @@ public class Descargar extends Thread{
     }
 
 
-     private static Set<String> findLinks(String url, String dominio) throws java.io.IOException {
+    private static Set<String> findLinks(String url, String dominio) throws java.io.IOException {
         Set<String> links = new HashSet<>();
         Document doc = Jsoup.connect(url)
                 .timeout(3000)
                 .get();
-        Elements elements = doc.select("a[href]");
-        Elements elements2 = doc.select("img[src]");
-        Elements elements3 = doc.select("link[href]");
+        Elements elements = doc.select("*[href]");
+        Elements elements2 = doc.select("*[src]");
         for (Element element : elements) {
             String rutaAbsoluta = element.absUrl("href");
             if(rutaAbsoluta.contains(dominio)){
@@ -111,12 +111,7 @@ public class Descargar extends Thread{
                 links.add(rutaAbsoluta);
             }
         }
-        for (Element element : elements3) {
-         String rutaAbsoluta = element.absUrl("href");
-            if(rutaAbsoluta.contains(dominio)){
-                links.add(rutaAbsoluta);
-            }
-        }
+        
         return links; 
     }
 }
