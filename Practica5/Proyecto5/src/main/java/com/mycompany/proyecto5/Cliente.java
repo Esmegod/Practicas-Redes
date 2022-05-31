@@ -32,7 +32,7 @@ public class Cliente {
     static int distancia = 1;
 
     public static void main(String[] args) {
-        //wget -r 2 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
+        //wget -r 3 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
         //wget -r 3 -t 25 https://www.escom.ipn.mx
         System.out.println("Ingrese el comando: wget -r produndidad -t hilos url");
         Scanner leer = new Scanner(System.in);
@@ -121,6 +121,7 @@ public class Cliente {
                         String absPath = new File("").getAbsolutePath().replace("\\", "/");      
                         String host = url.getHost();
                         String path = url.getPath();
+                        
                         if(!path.contains(".")){
                             path+="/index.html";
                         }
@@ -137,6 +138,7 @@ public class Cliente {
                 }
             }else{
                 System.out.println("Error code: " + httpUrlConnection.getResponseCode() + " con url " + recursoURL);
+                System.out.println("-------------------------------");
             }
         }catch(Exception e){
             System.out.println("Error al pedir recurso");

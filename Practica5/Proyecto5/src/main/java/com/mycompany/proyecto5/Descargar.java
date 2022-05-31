@@ -57,15 +57,43 @@ public class Descargar extends Thread{
                     String linea;
                     while(st.hasMoreTokens()){
                         linea = st.nextToken();
-                        if(linea.contains("src=")){
+                        if(linea.contains("src=")){ //Se reemplazan imagenes y todo con src
                             int i = linea.indexOf("src=");
                             int j = linea.indexOf("\"", i+5);
-                            String urlReemplazar = linea.substring(i+5, j);
-                            String urlLink = urlReemplazar.replace("../", "").replace("./", "");
-                            for(int k=0; k<arrD.size(); k++){ 
-                                if(arrD.get(k).contains(urlLink)){
-                                    String reemplazo = arrD.get(k).replace("https:/", absPath).replace("http:/", absPath);
-                                    linea = linea.replace(urlReemplazar, reemplazo);
+                            if(j<0) j = linea.indexOf("'", i+5);
+                            if(j>0){
+                                String urlReemplazar = linea.substring(i+5, j);
+                                String urlLink = urlReemplazar.replace("../", "").replace("./", "");
+                                for(int k=0; k<arrD.size(); k++){ 
+                                    if(arrD.get(k).contains(urlLink)){
+                                        String reemplazo = arrD.get(k).replace("https:/", absPath).replace("http:/", absPath);
+                                        linea = linea.replace(urlReemplazar, reemplazo);
+                                    }
+                                }
+                            }
+                        }
+                        if(linea.contains("href=")){ //Se reemplazan links a paginas y todo con href
+                            int i = linea.indexOf("href=");
+                            int j = linea.indexOf("\"", i+6);
+                            if(j<0) j = linea.indexOf("'", i+6);
+                            if(j>0){
+                                String urlReemplazar = linea.substring(i+6, j);
+                                if(!urlReemplazar.contains(":")){
+                                    String urlLink = urlReemplazar.replace("../", "").replace("./", "");
+                                    if (!urlLink.startsWith("?")) {
+                                        for (int k = 0; k < arrD.size(); k++) {
+                                            if (arrD.get(k).contains(urlLink)) {
+                                                String reemplazo = arrD.get(k).replace("https:/", absPath)
+                                                        .replace("http:/", absPath).replace("%", "%25");
+                                                if (urlReemplazar.endsWith("/")) {
+                                                    reemplazo += "index.html";
+                                                }
+                                                System.out.println("UrlReemplazar: " + urlReemplazar);
+                                                System.out.println("UrlReemplazo: " + reemplazo);
+                                                linea = linea.replaceFirst(urlReemplazar, reemplazo);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -115,3 +143,6 @@ public class Descargar extends Thread{
         return links; 
     }
 }
+
+// file:///C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221/axel/aplicaciones/22-2/?C=D;O=Aindex.html22-2/?C=S;O=Aindex.html22-2/?C=N;O=Aindex.html22-2/practicas/index.html22-2/Aplicaciones_Encuadre.pdfindex.html22-2/Ligas%2520clases_22-2.pdfindex.html22-2/?C=M;O=Aindex.htmlindex.html
+// file:///C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221/axel/aplicaciones/index.html

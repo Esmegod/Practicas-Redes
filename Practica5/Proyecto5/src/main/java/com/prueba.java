@@ -20,9 +20,9 @@ public class prueba {
          /*for (String link : findLinks("https://www.escom.ipn.mx/")) {
             System.out.println(link);
         }*/
-        String nueva = url.replace("../", "").replace("./", "");
-        System.out.println("url: " + url);
-        System.out.println("Nueva: " + nueva);
+        String y = "href =\"../../Esme/saludos/hola.zip\"";
+        String x = "esme./esme./esme./esme./esme./";
+        System.out.println(y.replaceFirst("../../Esme/saludos/hola.zip", "C://esmeeee/ola.doc"));
 
     }
     private static Set<String> findLinks(String url) throws java.io.IOException {
