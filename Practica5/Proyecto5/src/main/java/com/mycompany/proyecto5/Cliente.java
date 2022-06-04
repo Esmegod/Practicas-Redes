@@ -26,13 +26,13 @@ import org.jsoup.select.Elements;
  */
 public class Cliente {
     static final ArrayList<String> arrD = new ArrayList<String>();
-    static ArrayList<String> arrPV = new ArrayList<String>(); //Arreglo con rutas absolutas
+    static final ArrayList<String> arrPV = new ArrayList<String>(); //Arreglo con rutas absolutas
     static ExecutorService pool;
     static int poolSize=15;
     static int distancia = 1;
 
     public static void main(String[] args) {
-        //wget -r 3 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
+        //wget -r 6 -t 15 http://148.204.58.221/axel/aplicaciones/22-2/
         //wget -r 3 -t 25 https://www.escom.ipn.mx
         System.out.println("Ingrese el comando: wget -r produndidad -t hilos url");
         Scanner leer = new Scanner(System.in);

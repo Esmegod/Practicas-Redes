@@ -72,6 +72,7 @@ public class Descargar extends Thread{
                                 }
                             }
                         }
+                        
                         if(linea.contains("href=")){ //Se reemplazan links a paginas y todo con href
                             int i = linea.indexOf("href=");
                             int j = linea.indexOf("\"", i+6);
@@ -85,12 +86,11 @@ public class Descargar extends Thread{
                                             if (arrD.get(k).contains(urlLink)) {
                                                 String reemplazo = arrD.get(k).replace("https:/", absPath)
                                                         .replace("http:/", absPath).replace("%", "%25");
-                                                if (urlReemplazar.endsWith("/")) {
+                                                if(!urlReemplazar.contains(".")) {
                                                     reemplazo += "index.html";
                                                 }
-                                                System.out.println("UrlReemplazar: " + urlReemplazar);
-                                                System.out.println("UrlReemplazo: " + reemplazo);
                                                 linea = linea.replaceFirst(urlReemplazar, reemplazo);
+                                                break;
                                             }
                                         }
                                     }
@@ -143,6 +143,3 @@ public class Descargar extends Thread{
         return links; 
     }
 }
-
-// file:///C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221/axel/aplicaciones/22-2/?C=D;O=Aindex.html22-2/?C=S;O=Aindex.html22-2/?C=N;O=Aindex.html22-2/practicas/index.html22-2/Aplicaciones_Encuadre.pdfindex.html22-2/Ligas%2520clases_22-2.pdfindex.html22-2/?C=M;O=Aindex.htmlindex.html
-// file:///C:/Users/52552/Desktop/ESCOM/Sexto%20Semestre/Aplicaciones%20para%20comunicaciones%20en%20red/Practicas-Redes/Practica5/Proyecto5/148.204.58.221/axel/aplicaciones/index.html
