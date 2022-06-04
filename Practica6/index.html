@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practica 4</title>
+    <style>
+        /*Color: (42, 0, 63) #2A003F  */
+        @import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+        body{
+            background-color: #2A003F;
+            padding: 2% 5% 0% 5%;
+        }
+        #container{
+            display: flex;
+            flex-direction: row;
+        }
+        #datos{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nombre{
+            font-family: 'Staatliches', cursive;
+            text-align: center;
+            margin-bottom: 1%;
+            letter-spacing: 0.4vw;
+            color: white;
+            opacity: 0.92;
+            margin-top:100px;
+        }
+
+        .texto{
+            font-family: 'Noto Sans', sans-serif;
+            text-align: justify;
+            color: white;
+            opacity: 0.92;
+        }
+        .boton{
+            font-family: 'Noto Sans', sans-serif;
+        }
+        img{
+            min-width: 48vw;
+        }
+
+        a{
+            font-family: 'Staatliches';
+            color: #2A003F;
+            background-color: #36E9E9;
+            border-radius: 5px;
+            text-decoration: none;
+            padding: 8px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <img src="img/sol.gif" />
+        <div id="datos">
+            <h1 class="nombre">Imagen astronómica del día</h1>
+
+            <p class="texto">El Astronomy Picture of the Day (APOD) es un sitio web mantenido por la NASA y por la
+                Universidad Tecnológica de Míchigan. Cada día, se muestra
+                una imagen o foto diferente del nuestro universo, con una corta explicación escrita 
+                por un astrónomo profesional. La fotografía mostrada no es necesariamente tomada el
+                mismo día que se mostrada, y algunas veces se muestran fotos que ya han aparecido
+                anteriormente.</p>
+
+            <p class="texto">Consulta la imagen astronómica del día (APOD) correspondiente al mes de abril.</p>
+
+            <form action="http://127.0.0.1:8000" method="post" target="_blank">
+                <input class="" type="date" name="imagen-abril" id="fecha" min='2022-04-01' max="2022-04-30" required>
+                <input class="boton" type="submit" value="Consultar">
+            </form>
+
+            <a href="http://127.0.0.1:8000/calendarioNASA.pdf">Consultar calendario</a>
+            <!--
+                <form action="http://127.0.0.1:8000" method="get">
+                <input name="calendario" id="calendario" type="submit" value="Consultar calendario">
+                </form>
+            -->
+            
+
+        </div>
+    </div>
+</body>
+</html>
+
