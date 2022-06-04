@@ -1,54 +1,42 @@
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+
+import static java.net.StandardSocketOptions.SO_REUSEADDR;
 import java.util.*;
 
 public class ServidorWeb1{
     
     public static final int PUERTO=8000;
-    ServerSocket ss;
+    ServerSocketChannel ssc;
     
-    class Manejador extends Thread{
-        protected Socket socket;
+    class Manejador{
+        protected SocketChannel socket;
         protected PrintWriter pw;
         protected BufferedOutputStream bos;
         protected BufferedReader br;
-        DataOutputStream dos;
-        DataInputStream dis;
         protected String FileName;
         protected String mime;
 
-        public Manejador(Socket _socket) throws Exception{
-            this.socket=_socket;
+        public Manejador(SocketChannel _socketChannel) throws Exception{
+            this.socket=_socketChannel;
         }
 
-        public void run(){
+        public void administrarPeticion(){
             try{
-                dos = new DataOutputStream(socket.getOutputStream());
-                dis = new DataInputStream(socket.getInputStream());
-                byte[] b = new byte[10000000];
-                int t = dis.read(b);
+                ByteBuffer b = ByteBuffer.allocate(10000000);
+                int t = socket.read(b);
                 if(t==-1){
                     return;
                 }
-                String peticion = new String(b,0,t);
+                String peticion = new String(b.array(),0,t);
                 System.out.println("t: " + t);
-
-                if(peticion==null){
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("<html><head><title>Servidor WEB\n");
-                    sb.append("</title><body bgcolor=\"#AACCFF\"<br>Linea Vacia</br>\n");
-                    sb.append("</body></html>\n");
-                    dos.write(sb.toString().getBytes());
-                    dos.flush();
-                    socket.close();
-                    return;
-                }
-
-                System.out.println("Cliente Conectado desde: "+socket.getInetAddress());
-                System.out.println("Por el puerto: "+socket.getPort());
-                System.out.println("Datos: "+peticion+"\r\n\r\n");
-
+                System.out.println("Peticion:\n" + peticion);
+                
                 StringTokenizer st1= new StringTokenizer(peticion,"\n");
                 String line = st1.nextToken();
 
@@ -56,13 +44,13 @@ public class ServidorWeb1{
                     if(line.toUpperCase().startsWith("GET")){
                         getArch(line, st1);
                         if(FileName.compareTo("")==0){
-                            SendA("index.html",dos,mime);
+                            SendA("index.html",mime);
                         }else{
-                            SendA(FileName,dos,mime);
+                            SendA(FileName,mime);
                         }
                     }else if(line.toUpperCase().startsWith("POST")){
                         getArch(line, st1);
-                        SendA(FileName,dos, mime);
+                        SendA(FileName,mime);
                     }else if(line.toUpperCase().startsWith("PUT")){ 
                         /**
                             Content-Length: 821242
@@ -83,14 +71,13 @@ public class ServidorWeb1{
                         }
                         // Se inicia con la lectura del archivo
                         try{
-                            
                             String extension = mimePut.split("/")[1];
                             if(extension.equals("plain"))
                                 extension = "txt";
                             st1.nextToken();
                             FileOutputStream fos = new FileOutputStream(new File("archivosRecibidos/archivo."+extension));
                             int pos = t-bytes;   
-                            byte[] contenido = Arrays.copyOfRange(b, pos, t); 
+                            byte[] contenido = Arrays.copyOfRange(b.array(), pos, t); 
                             fos.write(contenido);
                             fos.flush();
                             fos.close();
@@ -100,8 +87,8 @@ public class ServidorWeb1{
                             sb = sb +"Server: Mesfer Server/1.0 \n";
                             sb = sb +"Date: " + new Date()+" \n";
                             sb = sb +"\n";
-                            dos.write(sb.getBytes());
-                            dos.flush();
+                            ByteBuffer resPut = ByteBuffer.wrap(sb.getBytes());
+                            socket.write(resPut);
                             /***********************************************/
                         
                         }catch(Exception e){
@@ -113,11 +100,11 @@ public class ServidorWeb1{
                             sb = sb +"Server: Mesfer Server/1.0 \n";
                             sb = sb +"Date: " + new Date()+" \n";
                             sb = sb +"\n";
-                            dos.write(sb.getBytes());
-                            dos.flush();
+                            ByteBuffer ePut = ByteBuffer.wrap(sb.getBytes());
+                            socket.write(ePut);
                             /***********************************************/
                         }finally{
-                            dos.close();
+                            socket.close();
                         }
                         
                     }else if(line.toUpperCase().startsWith("DELETE")){
@@ -132,8 +119,9 @@ public class ServidorWeb1{
                                 sb = sb +"Server: Mesfer Server/1.0 \n";
                                 sb = sb +"Date: " + new Date()+" \n";
                                 sb = sb +"\n";
-                                dos.write(sb.getBytes());
-                                dos.flush();
+                                ByteBuffer resDelete = ByteBuffer.wrap(sb.getBytes());
+                                socket.write(resDelete);
+                
                                 /***********************************************/
                             }else{
                                 //Respuesta de error para eliminar
@@ -143,8 +131,8 @@ public class ServidorWeb1{
                                 sb = sb +"Server: Mesfer Server/1.0 \n";
                                 sb = sb +"Date: " + new Date()+" \n";
                                 sb = sb +"\n";
-                                dos.write(sb.getBytes());
-                                dos.flush();
+                                ByteBuffer eDelete = ByteBuffer.wrap(sb.getBytes());
+                                socket.write(eDelete);
                                 /***********************************************/
                             }
                         }catch(Exception e){
@@ -155,11 +143,11 @@ public class ServidorWeb1{
                             sb = sb +"Server: Mesfer Server/1.0 \n";
                             sb = sb +"Date: " + new Date()+" \n";
                             sb = sb +"\n";
-                            dos.write(sb.getBytes());
-                            dos.flush();
+                            ByteBuffer e2Delete = ByteBuffer.wrap(sb.getBytes());
+                            socket.write(e2Delete);
                             /***********************************************/
                         }finally{
-                            dos.close();
+                            socket.close();
                         }
                     }else if(line.toUpperCase().startsWith("HEAD")){
 
@@ -186,14 +174,12 @@ public class ServidorWeb1{
                             respuesta.append("</b></h3>\n");
                             respuesta.append("</center></body></html>\n\n");
                             System.out.println("Respuesta: "+respuesta);
-                            dos.write(respuesta.toString().getBytes());
-                            dos.flush();
-                            dos.close();
+                            ByteBuffer resGet = ByteBuffer.wrap(respuesta.toString().getBytes());
+                            socket.write(resGet);
                             socket.close();        
                     }else{
-                            dos.write("HTTP/1.0 501 Not Implemented\r\n".getBytes());
-                            dos.flush();
-                            dos.close();
+                           ByteBuffer resDelete = ByteBuffer.wrap("HTTP/1.0 501 Not Implemented\r\n".getBytes());
+                            socket.write(resDelete);
                             socket.close();
                     }
                 
@@ -239,11 +225,11 @@ public class ServidorWeb1{
 
         }
                         
-        public void SendA(String arg, DataOutputStream dos1, String mime){
+        public void SendA(String arg, String mime){
             try{
                 int b_leidos=0;
                 DataInputStream dis2 = new DataInputStream(new FileInputStream(arg));
-                byte[] buf = new byte[1024];
+                byte[] buf = new byte[64];
                 int x=0;
                 File ff = new File(arg);			
                 long tam_archivo = ff.length(),cont=0;
@@ -255,17 +241,21 @@ public class ServidorWeb1{
                 sb = sb +"Content-Type: "+mime+" \n";
                 sb = sb +"Content-Length: "+tam_archivo+" \n";
                 sb = sb +"\n";
-                dos1.write(sb.getBytes());
-                dos1.flush();
+                
+                ByteBuffer respuesta = ByteBuffer.wrap(sb.getBytes());
+                socket.write(respuesta);
                 /***********************************************/
+                
                 while(cont<tam_archivo){
                     x = dis2.read(buf);
-                    dos1.write(buf,0,x);
+                    ByteBuffer archivo = ByteBuffer.wrap(Arrays.copyOfRange(buf, 0, x));
+                    socket.write(archivo);
                     cont=cont+x;
-                    dos1.flush();
                 }
+                System.out.println("Ha terminado de enviarse " + arg);
                 dis2.close();
-                dos1.close();
+                socket.close();
+              
             }catch(Exception e){
                 System.out.println("Error en SendA");
                 System.out.println(e.getMessage());
@@ -276,18 +266,55 @@ public class ServidorWeb1{
                         
     }
 		
-        public ServidorWeb1() throws Exception{
-            System.out.println("Iniciando Servidor.......");
-            this.ss=new ServerSocket(PUERTO);
-            System.out.println("Servidor iniciado:---OK");
-            System.out.println("Esperando por Cliente....");
-            for(;;){
-                Socket accept=ss.accept();
-                new Manejador(accept).start();
+        public ServidorWeb1(){
+            try{
+                System.out.println("Iniciando Servidor.......");
+                this.ssc = ServerSocketChannel.open();
+                ssc.configureBlocking(false);
+                ssc.setOption(SO_REUSEADDR, true);
+                InetSocketAddress i = new InetSocketAddress(PUERTO);
+                ssc.socket().bind(i);
+                Selector sel = Selector.open();
+                ssc.register(sel,  SelectionKey.OP_ACCEPT);
+                System.out.println("Servidor iniciado...");
+                for(;;){
+                    sel.select();
+                    Iterator<SelectionKey> it = sel.selectedKeys().iterator();
+                    while(it.hasNext()){
+                        SelectionKey k = (SelectionKey)it.next();
+                        it.remove();
+                        if(k.isAcceptable()){
+                            SocketChannel cl = ssc.accept();
+                            System.out.println("Cliente conectado desde: " + cl.socket().getInetAddress() + ":" + cl.socket().getPort());
+                            cl.configureBlocking(false);
+                            cl.register(sel, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+                            continue;
+                        }
+                        if(k.isReadable()){
+                            SocketChannel ch = (SocketChannel)k.channel(); 
+                            Manejador m = new Manejador(ch);
+
+                            //El selector indica que un canal esta listo para leer
+                            //¿Qué lees?
+                            m.administrarPeticion();
+                        
+                        }
+                        else if(k.isWritable()){
+                            //El selector indica que el canal esta listo para escribir
+                            //Escribes dependiendo de lo que leas en la petición 
+                            
+                        }
+
+                    }
+                }
+
+            }catch(Exception e){
+                System.out.println("Error al iniciar el servidor");
+                e.printStackTrace();
             }
         }
     
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args){
         ServidorWeb1 sWEB=new ServidorWeb1();
     }
     
