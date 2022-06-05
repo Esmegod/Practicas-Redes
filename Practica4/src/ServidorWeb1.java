@@ -270,10 +270,7 @@ public class ServidorWeb1{
                 System.out.println("Error en SendA");
                 System.out.println(e.getMessage());
             }
-        }
-
-
-                        
+        }                        
     }
 		
         public ServidorWeb1() throws Exception{

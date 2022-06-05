@@ -75,7 +75,9 @@ public class ServidorWeb1{
                             if(extension.equals("plain"))
                                 extension = "txt";
                             st1.nextToken();
-                            FileOutputStream fos = new FileOutputStream(new File("archivosRecibidos/archivo."+extension));
+                            File f = new File("archivosRecibidos/archivo."+extension);
+                            if(!f.getParentFile().exists()) f.getParentFile().mkdir();
+                            FileOutputStream fos = new FileOutputStream(f);
                             int pos = t-bytes;   
                             byte[] contenido = Arrays.copyOfRange(b.array(), pos, t); 
                             fos.write(contenido);
