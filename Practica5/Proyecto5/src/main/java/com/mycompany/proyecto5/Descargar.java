@@ -83,12 +83,12 @@ public class Descargar extends Thread{
                                     String urlLink = urlReemplazar.replace("../", "").replace("./", "");
                                     if (!urlLink.startsWith("?")) {
                                         for (int k = 0; k < arrD.size(); k++) {
-                                            if (arrD.get(k).contains(urlLink)) {
+                                            if (arrD.get(k).endsWith(urlLink)){
                                                 String reemplazo = arrD.get(k).replace("https:/", absPath)
                                                         .replace("http:/", absPath).replace("%", "%25");
                                                 if(!urlReemplazar.contains(".")) {
                                                     reemplazo += "index.html";
-                                                }
+                                                }   
                                                 linea = linea.replaceFirst(urlReemplazar, reemplazo);
                                                 break;
                                             }
